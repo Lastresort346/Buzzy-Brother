@@ -1,0 +1,41 @@
+{
+  "status": "passed",
+  "vision": {
+    "version": "third-person-spatial-v2",
+    "camera_count": 1,
+    "stereo_depth": false,
+    "grid": [
+      12,
+      8
+    ],
+    "optic_input_neurons": 512,
+    "hemisphere_neurons": {
+      "left": 249,
+      "right": 263
+    },
+    "avatar_mask_fraction": 0.022875,
+    "motion_history_reset": false,
+    "mean_edge_energy": 0.15948024532693986,
+    "motion_energy": {
+      "right": 0.03560541139181287,
+      "left": 0.05266959734966461,
+      "down": 0.04854353404492329,
+      "up": 0.031767759516139506
+    },
+    "mapping": "engineered screen regions with central overlap; not biological retinotopy",
+    "avatar_mask": [
+      0.5,
+      0.535,
+      0.07,
+      0.105
+    ]
+  },
+  "left_right_motor_effect_l2": 0.9626722070613319,
+  "camera_previews": 3,
+  "monitor_fits": true,
+  "raw_camera_shape": [
+    100,
+    160,
+    3
+  ]
+}

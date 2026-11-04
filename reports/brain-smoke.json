@@ -1,0 +1,109 @@
+{
+  "status": "passed",
+  "neural": {
+    "neurons": 3304,
+    "connections": 146364,
+    "active_neurons": 3207,
+    "spikes_last_interval": 10773,
+    "spikes_total": 347056,
+    "mean_rate_hz": 12.296192748160067,
+    "motor_mean_rate_hz": 5.678792037231406,
+    "decisions": 33,
+    "readout_updates": 32,
+    "last_reward": 89.0,
+    "prediction_error": 0.8528460865606449,
+    "action": "forward-right",
+    "dip": true,
+    "jump": false,
+    "convert": true,
+    "buy": 0,
+    "readout_architecture": "neural-regions-and-public-status-v5",
+    "learning_enabled": true,
+    "stochastic_actions": true,
+    "reward_system": {
+      "objective": "collect, convert, and purchase rewards with honey",
+      "expected_value": 0.06482604592464349,
+      "next_value": 0.055787890291110524,
+      "task_reward": 0.863,
+      "prediction_error": 0.8528460865606449,
+      "phasic_signal": 0.6925534081963601,
+      "tonic_signal": 0.05138124847215442,
+      "appetitive_channel": 0.8528460865606449,
+      "aversive_channel": 0,
+      "reward_components": {
+        "pollen": 0.89,
+        "honey": 0.0,
+        "purchases": 0.0,
+        "full_wait": -0.002,
+        "progress": 0.0,
+        "empty_dips": -0.025,
+        "blocked": -0.0
+      },
+      "model": "engineered TD actor-critic neuromodulation proxy"
+    },
+    "vision": {
+      "version": "semantic-third-person-v3",
+      "camera_count": 1,
+      "stereo_depth": false,
+      "grid": [
+        24,
+        16
+      ],
+      "optic_input_neurons": 2048,
+      "hemisphere_neurons": {
+        "left": 908,
+        "right": 1140
+      },
+      "avatar_mask_fraction": 0.023125,
+      "motion_history_reset": false,
+      "mean_edge_energy": 0.13471634191288476,
+      "motion_energy": {
+        "right": 0.13919500168753945,
+        "left": 0.1677188385727455,
+        "down": 0.2046869643668491,
+        "up": 0.19531985894504686
+      },
+      "mapping": "engineered screen regions with central overlap; not biological retinotopy",
+      "avatar_mask": [
+        0.5,
+        0.535,
+        0.07,
+        0.105
+      ],
+      "perception_model": "synthetic-flower-hive-mlp-v3",
+      "flower_regions": 73,
+      "hive_regions": 0
+    }
+  },
+  "behavior": {
+    "state": "COLLECTING",
+    "happiness_proxy": 94.09064239280025,
+    "recent_reward_trace": 2.2923355801100604,
+    "blocked_fraction": 0.0,
+    "escape_attempts": 0,
+    "episode_escape_attempts": 0,
+    "episodes": 1,
+    "escape_definition": ">=0.5 seconds of continuous outward movement against an outer wall; rearmed when outward input stops",
+    "happiness_definition": "clip(50 + 45*tanh(10-second decayed environment-reward/100 trace) - 25*2-second blocked EMA, 0, 100)"
+  },
+  "observation_shape": [
+    400,
+    640,
+    3
+  ],
+  "action_variety": [
+    "back-left",
+    "back-right",
+    "backward",
+    "forward",
+    "forward-left",
+    "forward-right",
+    "idle",
+    "right"
+  ],
+  "vision_changed": true,
+  "reward_updates_readout": true,
+  "real_graph_pixel_effect_l2": 1.6377224867986448,
+  "real_graph_recurrent_ablation_effect_l2": 1.021703104924662,
+  "reward_check": "test-only relocation to flower patch; autonomous collection not established"
+}

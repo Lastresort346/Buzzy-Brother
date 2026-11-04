@@ -1,0 +1,26 @@
+{
+  "status": "passed",
+  "curriculum": "pollen collection; start at flowers, no later relocation",
+  "autonomous_pollen": 239,
+  "successful_swings": 8,
+  "readout_changed": true,
+  "critic_norm": 0.035943339928552906,
+  "reward_system": {
+    "objective": "collect pollen with the dipper",
+    "expected_value": 0.0433833739107168,
+    "next_value": 0.0,
+    "task_reward": 0.0,
+    "prediction_error": -0.0433833739107168,
+    "phasic_signal": -0.043356176855325536,
+    "tonic_signal": 0.01896831079408002,
+    "appetitive_channel": 0,
+    "aversive_channel": 0.0433833739107168,
+    "reward_components": {
+      "pollen": 0.0,
+      "empty_dips": -0.0,
+      "blocked": -0.0
+    },
+    "model": "engineered TD actor-critic neuromodulation proxy"
+  },
+  "monitor_footer_visible": true
+}

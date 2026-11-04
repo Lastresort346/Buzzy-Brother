@@ -1,0 +1,640 @@
+{
+  "policy_inputs": "RGB and public UI state encoded into neurons; no runtime world coordinates",
+  "teacher": "privileged simulator teacher used only for demonstration warm-up and aggregation",
+  "demonstrations": [
+    {
+      "seed": 7100,
+      "capacity": 60,
+      "gap": 1,
+      "initial_pollen": 60,
+      "collected": 240,
+      "converted": 240,
+      "purchases": 3
+    },
+    {
+      "seed": 7101,
+      "capacity": 60,
+      "gap": 4,
+      "initial_pollen": 60,
+      "collected": 240,
+      "converted": 240,
+      "purchases": 3
+    },
+    {
+      "seed": 7102,
+      "capacity": 60,
+      "gap": 10,
+      "initial_pollen": 60,
+      "collected": 240,
+      "converted": 240,
+      "purchases": 3
+    },
+    {
+      "seed": 7103,
+      "capacity": 60,
+      "gap": 17,
+      "initial_pollen": 60,
+      "collected": 234,
+      "converted": 240,
+      "purchases": 3
+    },
+    {
+      "seed": 7200,
+      "capacity": 60,
+      "gap": 1,
+      "wallet": 300,
+      "collected": 240,
+      "converted": 180,
+      "purchases": 5
+    },
+    {
+      "seed": 7201,
+      "capacity": 60,
+      "gap": 1,
+      "wallet": 700,
+      "collected": 240,
+      "converted": 180,
+      "purchases": 8
+    },
+    {
+      "seed": 7300,
+      "capacity": 60,
+      "collected": 240,
+      "converted": 240,
+      "purchases": 3
+    },
+    {
+      "seed": 7301,
+      "capacity": 120,
+      "collected": 360,
+      "converted": 240,
+      "purchases": 3
+    },
+    {
+      "seed": 7302,
+      "capacity": 300,
+      "initial_pollen": 200,
+      "collected": 367,
+      "converted": 300,
+      "purchases": 4
+    },
+    {
+      "seed": 7303,
+      "capacity": 300,
+      "initial_pollen": 240,
+      "collected": 331,
+      "converted": 300,
+      "purchases": 4
+    }
+  ],
+  "fit": {
+    "examples": 960,
+    "steps": 1200,
+    "training_movement_accuracy": 0.9885416666666667,
+    "source": "privileged training demonstrations; never a runtime controller"
+  },
+  "rl_episodes": [
+    {
+      "seed": 8400,
+      "collected": 300,
+      "converted": 300,
+      "purchases": 4
+    },
+    {
+      "seed": 8401,
+      "collected": 300,
+      "converted": 300,
+      "purchases": 4
+    },
+    {
+      "seed": 8402,
+      "collected": 290,
+      "converted": 300,
+      "purchases": 4
+    },
+    {
+      "seed": 8403,
+      "collected": 541,
+      "converted": 555,
+      "purchases": 6
+    }
+  ],
+  "validation_bc": [
+    {
+      "seed": 8101,
+      "capacity": 60,
+      "initial_pollen": 60,
+      "collected": 300,
+      "converted": 300,
+      "honey_earned": 300,
+      "honey_wallet": 73,
+      "purchases": 4,
+      "owned": [
+        2,
+        2,
+        0
+      ],
+      "purchase_utility": 15.538461538461538,
+      "honey_spent": 227,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -4.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -10.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ]
+      ]
+    },
+    {
+      "seed": 8102,
+      "capacity": 60,
+      "initial_pollen": 0,
+      "collected": 480,
+      "converted": 420,
+      "honey_earned": 420,
+      "honey_wallet": 113,
+      "purchases": 5,
+      "owned": [
+        2,
+        3,
+        0
+      ],
+      "purchase_utility": 21.53846153846154,
+      "honey_spent": 307,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -11.5
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -5.5
+        ],
+        [
+          -10.0,
+          -8.5
+        ]
+      ]
+    }
+  ],
+  "validation_rl": [
+    {
+      "seed": 8101,
+      "capacity": 60,
+      "initial_pollen": 60,
+      "collected": 300,
+      "converted": 300,
+      "honey_earned": 300,
+      "honey_wallet": 73,
+      "purchases": 4,
+      "owned": [
+        2,
+        2,
+        0
+      ],
+      "purchase_utility": 15.538461538461538,
+      "honey_spent": 227,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -4.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -10.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ]
+      ]
+    },
+    {
+      "seed": 8102,
+      "capacity": 60,
+      "initial_pollen": 0,
+      "collected": 480,
+      "converted": 420,
+      "honey_earned": 420,
+      "honey_wallet": 113,
+      "purchases": 5,
+      "owned": [
+        2,
+        3,
+        0
+      ],
+      "purchase_utility": 21.53846153846154,
+      "honey_spent": 307,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -11.5
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -5.5
+        ],
+        [
+          -10.0,
+          -8.5
+        ]
+      ]
+    }
+  ],
+  "promoted_rl_candidate": true,
+  "held_out": [
+    {
+      "seed": 9101,
+      "capacity": 60,
+      "initial_pollen": 60,
+      "collected": 360,
+      "converted": 360,
+      "honey_earned": 360,
+      "honey_wallet": 53,
+      "purchases": 5,
+      "owned": [
+        2,
+        3,
+        0
+      ],
+      "purchase_utility": 21.53846153846154,
+      "honey_spent": 307,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -15.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          -1.5
+        ],
+        [
+          -10.0,
+          -10.5
+        ],
+        [
+          -10.0,
+          -13.5
+        ],
+        [
+          -10.0,
+          -1.5
+        ],
+        [
+          -10.0,
+          -10.5
+        ],
+        [
+          -10.0,
+          -9.0
+        ],
+        [
+          -10.0,
+          -3.0
+        ],
+        [
+          -10.0,
+          -15.0
+        ],
+        [
+          -10.0,
+          -4.5
+        ],
+        [
+          -10.0,
+          -7.5
+        ]
+      ]
+    },
+    {
+      "seed": 9102,
+      "capacity": 60,
+      "initial_pollen": 0,
+      "collected": 600,
+      "converted": 585,
+      "honey_earned": 585,
+      "honey_wallet": 78,
+      "purchases": 6,
+      "owned": [
+        2,
+        3,
+        1
+      ],
+      "purchase_utility": 33.53846153846154,
+      "honey_spent": 507,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -16.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -10.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ]
+      ]
+    },
+    {
+      "seed": 9103,
+      "capacity": 300,
+      "initial_pollen": 0,
+      "collected": 780,
+      "converted": 600,
+      "honey_earned": 600,
+      "honey_wallet": 23,
+      "purchases": 7,
+      "owned": [
+        3,
+        3,
+        1
+      ],
+      "purchase_utility": 34.78846153846154,
+      "honey_spent": 577,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        23.58
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          3.5
+        ],
+        [
+          -10.0,
+          3.5
+        ],
+        [
+          -10.0,
+          3.5
+        ],
+        [
+          -10.0,
+          3.5
+        ],
+        [
+          -10.0,
+          3.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          2.0
+        ],
+        [
+          -10.0,
+          2.0
+        ],
+        [
+          -10.0,
+          2.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          6.5
+        ],
+        [
+          -10.0,
+          11.0
+        ],
+        [
+          -10.0,
+          23.58
+        ],
+        [
+          -10.0,
+          23.58
+        ],
+        [
+          -10.0,
+          23.58
+        ]
+      ]
+    }
+  ],
+  "economy": "escalating sticker prices with diminishing novelty; 3 snacks; 1 charm",
+  "checkpoint": "models\\controller-market-v5.npz",
+  "scope": "fixed arena/corridor curriculum; economic optimality not established"
+}

@@ -1,0 +1,325 @@
+{
+  "created_utc": "2026-11-03T16:50:56.916002+00:00",
+  "neurons": 139255,
+  "connection_region_rows": 16847997,
+  "directed_neuron_pairs": 15091983,
+  "anatomical_synapse_count": 54492922,
+  "isolated_neurons": 616,
+  "neurons_without_any_annotations": 14,
+  "missing_annotations_by_field": {
+    "cell_class": 31744,
+    "cell_sub_class": 113430,
+    "cell_type": 1541,
+    "dimorphism": 14,
+    "fbbt_id": 110353,
+    "flow": 14,
+    "fru_dsx": 135947,
+    "hartenstein_hemilineage": 104452,
+    "hemibrain_type": 105987,
+    "ito_lee_hemilineage": 101713,
+    "known_nt": 51424,
+    "known_nt_source": 51424,
+    "matching_notes": 138881,
+    "nerve": 129611,
+    "nucleus_id": 32178,
+    "pos_x": 14,
+    "pos_y": 14,
+    "pos_z": 14,
+    "side": 44,
+    "soma_x": 21155,
+    "soma_y": 21155,
+    "soma_z": 21155,
+    "status": 138597,
+    "super_class": 14,
+    "supertype": 105410,
+    "supervoxel_id": 14,
+    "synonyms": 136792,
+    "top_nt": 614,
+    "top_nt_conf": 614,
+    "vfb_id": 15
+  },
+  "annotation_groups_top20": {
+    "super_class": {
+      "optic": 77537,
+      "central": 32383,
+      "sensory": 16904,
+      "visual_projection": 8038,
+      "ascending": 1750,
+      "descending": 1303,
+      "sensory_ascending": 612,
+      "visual_centrifugal": 524,
+      "motor": 110,
+      "endocrine": 80,
+      "(missing)": 14
+    },
+    "cell_class": {
+      "(missing)": 31744,
+      "ME>LO": 22311,
+      "ME": 18842,
+      "visual": 11391,
+      "LA>ME": 8033,
+      "ME>LOP": 6242,
+      "LO>LOP": 6003,
+      "ME>LO.LOP": 5565,
+      "Kenyon_Cell": 5177,
+      "ME>LA": 4979,
+      "CX": 2875,
+      "mechanosensory": 2667,
+      "olfactory": 2281,
+      "AN": 2276,
+      "LO": 1521,
+      "LOP>ME.LO": 1064,
+      "LOP": 711,
+      "ALPN": 685,
+      "LOP>LO": 590,
+      "LHLN": 514
+    },
+    "cell_sub_class": {
+      "(missing)": 113430,
+      "L1-5": 8033,
+      "columnar": 4352,
+      "KCg": 2490,
+      "tangential": 1796,
+      "KCab": 1643,
+      "eye bristle": 1112,
+      "AN_GNG": 658,
+      "wind_gravity": 484,
+      "pheromone": 429,
+      "multiglomerular": 400,
+      "SA_DMT_DMetaN": 398,
+      "auditory": 390,
+      "head bristle": 305,
+      "ring neuron": 278,
+      "uniglomerular": 277,
+      "AN_multi": 275,
+      "ocellar": 273,
+      "grooming": 192,
+      "AN_AVLP": 189
+    },
+    "cell_type": {
+      "R1-6": 8452,
+      "KCg-m": 2189,
+      "T2a": 1772,
+      "Tm3": 1756,
+      "T4c": 1706,
+      "L2": 1697,
+      "T3": 1675,
+      "KCab": 1643,
+      "L1": 1591,
+      "Mi1": 1584,
+      "L5": 1577,
+      "T4d": 1573,
+      "Tm1": 1555,
+      "Mi9": 1553,
+      "Tm2": 1551,
+      "(missing)": 1541,
+      "T5c": 1541,
+      "Mi4": 1532,
+      "C3": 1530,
+      "Tm9": 1522
+    },
+    "top_nt": {
+      "acetylcholine": 86191,
+      "glutamate": 24873,
+      "gaba": 19171,
+      "dopamine": 5909,
+      "serotonin": 2281,
+      "(missing)": 614,
+      "octopamine": 216
+    },
+    "known_nt": {
+      "(missing)": 51424,
+      "acetylcholine": 33219,
+      "histamine": 9795,
+      "glutamate": 9261,
+      "acetylcholine; acetylcholine": 7335,
+      "gaba-negative": 4913,
+      "gaba": 4188,
+      "acetylcholine; sNPF; acetylcholine, sNPF": 4133,
+      "gaba, nitric oxide": 2988,
+      "acetylcholine; gaba-negative": 1614,
+      "glutamate, gaba; glutamate": 1568,
+      "acetylcholine; tachykinin": 1544,
+      "acetylcholine-negative, glutamate-negative, gaba-negative, dopamine-negative, serotonin-negative, octopamine-negative": 1389,
+      "histamine; acetylcholine, histamine": 1324,
+      "acetylcholine, nitric oxide, dopamine": 980,
+      "acetylcholine, sNPF": 703,
+      "acetylcholine, MIP, gaba-negative, glutamate-negative, dopamine-negative, tyramine-negative, octopamine-negative": 321,
+      "acetylcholine, nitric oxide": 313,
+      "dopamine": 206,
+      "gaba, nitric oxide; sNPF": 148
+    },
+    "side": {
+      "left": 69952,
+      "right": 69085,
+      "center": 174,
+      "(missing)": 44
+    }
+  },
+  "candidate_populations": {
+    "sensory_candidates": {
+      "field": "super_class",
+      "exact_values_case_insensitive": [
+        "optic",
+        "sensory",
+        "visual_projection"
+      ],
+      "count": 102479,
+      "field_present_in_source": true,
+      "status": "annotation match only; requires circuit literature review"
+    },
+    "motor_output_candidates": {
+      "field": "super_class",
+      "exact_values_case_insensitive": [
+        "descending",
+        "motor"
+      ],
+      "count": 1413,
+      "field_present_in_source": true,
+      "status": "annotation match only; requires circuit literature review"
+    },
+    "predicted_dopaminergic_candidates": {
+      "field": "top_nt",
+      "exact_values_case_insensitive": [
+        "dopamine"
+      ],
+      "count": 5909,
+      "field_present_in_source": true,
+      "status": "annotation match only; requires circuit literature review"
+    },
+    "known_nt_exact_dopamine_candidates": {
+      "field": "known_nt",
+      "exact_values_case_insensitive": [
+        "dopamine"
+      ],
+      "count": 206,
+      "field_present_in_source": true,
+      "status": "annotation match only; requires circuit literature review"
+    },
+    "mushroom_body_candidates": {
+      "field": "cell_class",
+      "exact_values_case_insensitive": [
+        "dan",
+        "kenyon_cell",
+        "mbon"
+      ],
+      "count": 5604,
+      "field_present_in_source": true,
+      "status": "annotation match only; requires circuit literature review"
+    }
+  },
+  "top_outgoing": [
+    {
+      "root_id": "720575940628908548",
+      "outgoing_synapses": 99871
+    },
+    {
+      "root_id": "720575940626979621",
+      "outgoing_synapses": 98624
+    },
+    {
+      "root_id": "720575940624547622",
+      "outgoing_synapses": 60103
+    },
+    {
+      "root_id": "720575940613583001",
+      "outgoing_synapses": 50681
+    },
+    {
+      "root_id": "720575940627497244",
+      "outgoing_synapses": 47851
+    },
+    {
+      "root_id": "720575940625952755",
+      "outgoing_synapses": 47162
+    },
+    {
+      "root_id": "720575940634612194",
+      "outgoing_synapses": 35806
+    },
+    {
+      "root_id": "720575940620008758",
+      "outgoing_synapses": 33763
+    },
+    {
+      "root_id": "720575940628307026",
+      "outgoing_synapses": 31889
+    },
+    {
+      "root_id": "720575940628038808",
+      "outgoing_synapses": 28611
+    }
+  ],
+  "source_manifest": {
+    "dataset": "FlyWire FAFB",
+    "connectivity_version": "783.0",
+    "created_utc": "2026-11-03T16:43:50.989277+00:00",
+    "annotation_commit": "a83b2776d60d5764cef36b927f5f9679c16c47a2",
+    "connectivity_source": "https://zenodo.org/records/10676866",
+    "annotation_source": "https://github.com/flyconnectome/flywire_annotations",
+    "files": {
+      "proofread_connections_783.feather": {
+        "url": "https://zenodo.org/records/10676866/files/proofread_connections_783.feather?download=1",
+        "md5": "f48f972d262323a102aed49af1396b8a",
+        "sha256": "24f960ae3e7d4f8cd30db3b62e99fb5179cc3d1e76d8c155bfb441e9737d3faf",
+        "bytes": 852022274
+      },
+      "proofread_root_ids_783.npy": {
+        "url": "https://zenodo.org/records/10676866/files/proofread_root_ids_783.npy?download=1",
+        "md5": "e0e6c19732fd8c7a4e39a2d170105421",
+        "sha256": "7c7b7e818e9232e5ab64793d52ba20574dbe9da3a6509fbc74193b0f259a01be",
+        "bytes": 1114168
+      },
+      "Supplemental_file1_neuron_annotations.tsv": {
+        "url": "https://raw.githubusercontent.com/flyconnectome/flywire_annotations/a83b2776d60d5764cef36b927f5f9679c16c47a2/supplemental_files/Supplemental_file1_neuron_annotations.tsv",
+        "commit": "a83b2776d60d5764cef36b927f5f9679c16c47a2",
+        "sha256": "b214970b55d2fbe0853bba536fdcb9e28730f4eb7ab06f600491df795da683cd",
+        "bytes": 31720298
+      }
+    }
+  },
+  "annotation_import": {
+    "matched": 139241,
+    "outside_proofread_ids": 7,
+    "fields": [
+      "supervoxel_id",
+      "root_id",
+      "pos_x",
+      "pos_y",
+      "pos_z",
+      "soma_x",
+      "soma_y",
+      "soma_z",
+      "nucleus_id",
+      "flow",
+      "super_class",
+      "cell_class",
+      "cell_sub_class",
+      "supertype",
+      "cell_type",
+      "hemibrain_type",
+      "ito_lee_hemilineage",
+      "hartenstein_hemilineage",
+      "top_nt",
+      "top_nt_conf",
+      "known_nt",
+      "known_nt_source",
+      "side",
+      "nerve",
+      "vfb_id",
+      "fbbt_id",
+      "status",
+      "dimorphism",
+      "matching_notes",
+      "fru_dsx",
+      "synonyms"
+    ]
+  },
+  "database_bytes": 1461321728,
+  "limitations": [
+    "Connectivity is anatomical, not a validated dynamic brain model.",
+    "Multiple neuropil rows can describe one neuron pair; rows are not individual synapses.",
+    "Transmitter argmax is a prediction, not a validated synaptic sign or reward function.",
+    "Annotation absence does not establish biological irrelevance. No circuits have been deleted."
+  ]
+}

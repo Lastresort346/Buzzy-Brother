@@ -1,0 +1,361 @@
+{
+  "algorithm": "experimental on-policy TD actor/critic readout with eligibility traces; fixed connectome reservoir",
+  "perception": "frozen supervised flower/hive recognizer; runtime RGB only",
+  "policy_inputs": "RGB plus public inventory status; no world coordinates or oracle labels",
+  "training_episodes": [
+    {
+      "lesson": "convert",
+      "seed": 1000,
+      "seconds": 16.0,
+      "collected": 0,
+      "honey": 104,
+      "backpack": 196,
+      "capacity": 300,
+      "successful_dips": 0,
+      "full_cycle": false
+    },
+    {
+      "lesson": "convert",
+      "seed": 1001,
+      "seconds": 16.0,
+      "collected": 0,
+      "honey": 78,
+      "backpack": 222,
+      "capacity": 300,
+      "successful_dips": 0,
+      "full_cycle": false
+    },
+    {
+      "lesson": "convert",
+      "seed": 1002,
+      "seconds": 16.0,
+      "collected": 0,
+      "honey": 44,
+      "backpack": 256,
+      "capacity": 300,
+      "successful_dips": 0,
+      "full_cycle": false
+    },
+    {
+      "lesson": "convert",
+      "seed": 1003,
+      "seconds": 16.0,
+      "collected": 0,
+      "honey": 0,
+      "backpack": 300,
+      "capacity": 300,
+      "successful_dips": 0,
+      "full_cycle": false
+    },
+    {
+      "lesson": "pollen",
+      "seed": 1100,
+      "seconds": 16.0,
+      "collected": 300,
+      "honey": 0,
+      "backpack": 300,
+      "capacity": 300,
+      "successful_dips": 3,
+      "full_cycle": false
+    },
+    {
+      "lesson": "pollen",
+      "seed": 1101,
+      "seconds": 16.0,
+      "collected": 300,
+      "honey": 0,
+      "backpack": 300,
+      "capacity": 300,
+      "successful_dips": 4,
+      "full_cycle": false
+    },
+    {
+      "lesson": "pollen",
+      "seed": 1102,
+      "seconds": 16.0,
+      "collected": 190,
+      "honey": 0,
+      "backpack": 190,
+      "capacity": 300,
+      "successful_dips": 3,
+      "full_cycle": false
+    },
+    {
+      "lesson": "pollen",
+      "seed": 1103,
+      "seconds": 16.0,
+      "collected": 300,
+      "honey": 0,
+      "backpack": 300,
+      "capacity": 300,
+      "successful_dips": 8,
+      "full_cycle": false
+    },
+    {
+      "lesson": "cycle",
+      "seed": 1200,
+      "seconds": 16.0,
+      "collected": 300,
+      "honey": 0,
+      "backpack": 300,
+      "capacity": 300,
+      "successful_dips": 6,
+      "full_cycle": false
+    },
+    {
+      "lesson": "cycle",
+      "seed": 1201,
+      "seconds": 16.0,
+      "collected": 232,
+      "honey": 0,
+      "backpack": 232,
+      "capacity": 300,
+      "successful_dips": 4,
+      "full_cycle": false
+    },
+    {
+      "lesson": "cycle",
+      "seed": 1202,
+      "seconds": 16.0,
+      "collected": 299,
+      "honey": 0,
+      "backpack": 299,
+      "capacity": 300,
+      "successful_dips": 6,
+      "full_cycle": false
+    },
+    {
+      "lesson": "cycle",
+      "seed": 1203,
+      "seconds": 16.0,
+      "collected": 300,
+      "honey": 0,
+      "backpack": 300,
+      "capacity": 300,
+      "successful_dips": 6,
+      "full_cycle": false
+    }
+  ],
+  "held_out_evaluation": {
+    "random": {
+      "episodes": [
+        {
+          "lesson": "convert",
+          "seed": 9000,
+          "seconds": 16.0,
+          "collected": 0,
+          "honey": 15,
+          "backpack": 285,
+          "capacity": 300,
+          "successful_dips": 0,
+          "full_cycle": false
+        },
+        {
+          "lesson": "convert",
+          "seed": 9001,
+          "seconds": 16.0,
+          "collected": 0,
+          "honey": 100,
+          "backpack": 200,
+          "capacity": 300,
+          "successful_dips": 0,
+          "full_cycle": false
+        },
+        {
+          "lesson": "pollen",
+          "seed": 9100,
+          "seconds": 16.0,
+          "collected": 110,
+          "honey": 0,
+          "backpack": 110,
+          "capacity": 300,
+          "successful_dips": 4,
+          "full_cycle": false
+        },
+        {
+          "lesson": "pollen",
+          "seed": 9101,
+          "seconds": 16.0,
+          "collected": 242,
+          "honey": 0,
+          "backpack": 242,
+          "capacity": 300,
+          "successful_dips": 4,
+          "full_cycle": false
+        },
+        {
+          "lesson": "cycle",
+          "seed": 9200,
+          "seconds": 16.0,
+          "collected": 254,
+          "honey": 0,
+          "backpack": 254,
+          "capacity": 300,
+          "successful_dips": 6,
+          "full_cycle": false
+        },
+        {
+          "lesson": "cycle",
+          "seed": 9201,
+          "seconds": 16.0,
+          "collected": 300,
+          "honey": 0,
+          "backpack": 300,
+          "capacity": 300,
+          "successful_dips": 5,
+          "full_cycle": false
+        }
+      ],
+      "mean_honey": 19.166666666666668,
+      "complete_cycles": 0
+    },
+    "untrained": {
+      "episodes": [
+        {
+          "lesson": "convert",
+          "seed": 9000,
+          "seconds": 16.0,
+          "collected": 0,
+          "honey": 104,
+          "backpack": 196,
+          "capacity": 300,
+          "successful_dips": 0,
+          "full_cycle": false
+        },
+        {
+          "lesson": "convert",
+          "seed": 9001,
+          "seconds": 16.0,
+          "collected": 0,
+          "honey": 78,
+          "backpack": 222,
+          "capacity": 300,
+          "successful_dips": 0,
+          "full_cycle": false
+        },
+        {
+          "lesson": "pollen",
+          "seed": 9100,
+          "seconds": 16.0,
+          "collected": 210,
+          "honey": 0,
+          "backpack": 210,
+          "capacity": 300,
+          "successful_dips": 4,
+          "full_cycle": false
+        },
+        {
+          "lesson": "pollen",
+          "seed": 9101,
+          "seconds": 16.0,
+          "collected": 70,
+          "honey": 0,
+          "backpack": 70,
+          "capacity": 300,
+          "successful_dips": 1,
+          "full_cycle": false
+        },
+        {
+          "lesson": "cycle",
+          "seed": 9200,
+          "seconds": 16.0,
+          "collected": 300,
+          "honey": 0,
+          "backpack": 300,
+          "capacity": 300,
+          "successful_dips": 4,
+          "full_cycle": false
+        },
+        {
+          "lesson": "cycle",
+          "seed": 9201,
+          "seconds": 16.0,
+          "collected": 300,
+          "honey": 0,
+          "backpack": 300,
+          "capacity": 300,
+          "successful_dips": 4,
+          "full_cycle": false
+        }
+      ],
+      "mean_honey": 30.333333333333332,
+      "complete_cycles": 0
+    },
+    "trained": {
+      "episodes": [
+        {
+          "lesson": "convert",
+          "seed": 9000,
+          "seconds": 16.0,
+          "collected": 0,
+          "honey": 138,
+          "backpack": 162,
+          "capacity": 300,
+          "successful_dips": 0,
+          "full_cycle": false
+        },
+        {
+          "lesson": "convert",
+          "seed": 9001,
+          "seconds": 16.0,
+          "collected": 65,
+          "honey": 65,
+          "backpack": 300,
+          "capacity": 300,
+          "successful_dips": 2,
+          "full_cycle": false
+        },
+        {
+          "lesson": "pollen",
+          "seed": 9100,
+          "seconds": 16.0,
+          "collected": 300,
+          "honey": 0,
+          "backpack": 300,
+          "capacity": 300,
+          "successful_dips": 5,
+          "full_cycle": false
+        },
+        {
+          "lesson": "pollen",
+          "seed": 9101,
+          "seconds": 16.0,
+          "collected": 80,
+          "honey": 0,
+          "backpack": 80,
+          "capacity": 300,
+          "successful_dips": 2,
+          "full_cycle": false
+        },
+        {
+          "lesson": "cycle",
+          "seed": 9200,
+          "seconds": 16.0,
+          "collected": 150,
+          "honey": 0,
+          "backpack": 150,
+          "capacity": 300,
+          "successful_dips": 2,
+          "full_cycle": false
+        },
+        {
+          "lesson": "cycle",
+          "seed": 9201,
+          "seconds": 16.0,
+          "collected": 300,
+          "honey": 0,
+          "backpack": 300,
+          "capacity": 300,
+          "successful_dips": 6,
+          "full_cycle": false
+        }
+      ],
+      "mean_honey": 33.833333333333336,
+      "complete_cycles": 0
+    }
+  },
+  "readout_changed": true,
+  "updates": 767,
+  "checkpoint": "models\\controller-v3.npz",
+  "scope": "initial bounded training batch; reliable full collection-return-conversion behavior is not assumed"
+}

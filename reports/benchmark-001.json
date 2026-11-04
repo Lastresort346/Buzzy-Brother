@@ -1,0 +1,43 @@
+{
+  "created_utc": "2026-11-03T16:47:19.843224+00:00",
+  "model": "unsigned normalized leaky tanh rate network",
+  "model_parameters": {
+    "retention": 0.9,
+    "update_fraction": 0.1,
+    "drive": 0.2,
+    "driven_fraction": 0.05,
+    "normalization": "incoming synapse count"
+  },
+  "limitations": [
+    "All connections use positive weights for a propagation workload only.",
+    "No validated transmitter signs, time constants, plasticity, learning, or biological time scale.",
+    "CPU NumPy benchmark only; GPU performance is unmeasured.",
+    "Selection is an engineering subset, not a functioning organism."
+  ],
+  "neurons": 1000,
+  "directed_pairs": 35135,
+  "anatomical_synapses_represented": 290236,
+  "steps": 500,
+  "repeats": 3,
+  "rng_seed": 42,
+  "elapsed_seconds": [
+    0.09451279999939288,
+    0.09969830000045476,
+    0.10102419999930135
+  ],
+  "median_seconds": 0.09969830000045476,
+  "steps_per_second": 5015.130649145665,
+  "edge_updates_per_second": 176206615.35773295,
+  "core_array_bytes": 586160,
+  "memory_note": "Core array storage only; excludes Python/SQLite, temporary arrays and process peak RAM.",
+  "final_activity_mean": 0.2882219110983891,
+  "final_activity_max": 0.5215176357635393,
+  "final_state_sha256": "402e5da1de0dad3b4f8be678dadb8e23208c5ddf110d6f1899d04cbf02549ee5",
+  "selection_sha256": "d288d93a836d36a813dc5a066b264c74499b3a6cc54066072b4096580216acf0",
+  "source_manifest_sha256": "2914976135906b98a5ced6250cb25d8a82f89558b3cc487ae776c89b3c9c2cdd",
+  "python": "3.14.4 (tags/v3.14.4:23116f9, Apr  7 2026, 14:10:54) [MSC v.1944 64 bit (AMD64)]",
+  "numpy": "2.5.4",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "processor": "AMD64 Family 25 Model 80 Stepping 0, AuthenticAMD",
+  "logical_cpu_count": 12
+}

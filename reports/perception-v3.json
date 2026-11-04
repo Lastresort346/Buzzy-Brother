@@ -1,0 +1,46 @@
+{
+  "split_seeds": {
+    "train": 101,
+    "validation": 202,
+    "test": 303
+  },
+  "frames": {
+    "train": 30,
+    "validation": 12,
+    "test": 15
+  },
+  "camera": [
+    640,
+    400
+  ],
+  "segmentation_resolution": [
+    320,
+    200
+  ],
+  "steps": 600,
+  "held_out": {
+    "flower": {
+      "precision": 0.8637099723136394,
+      "recall": 0.8975625644644699,
+      "iou": 0.7862101759391346,
+      "true_positive": 16534,
+      "false_positive": 2609,
+      "false_negative": 1887
+    },
+    "hive": {
+      "precision": 0.9870807158942753,
+      "recall": 0.9818439047394483,
+      "iou": 0.9693865673379117,
+      "true_positive": 16656,
+      "false_positive": 218,
+      "false_negative": 308
+    }
+  },
+  "thresholds": [
+    0.0,
+    0.949848473072052,
+    0.9423232078552246
+  ],
+  "scope": "synthetic arena flower/hive pixel recognition; not real Roblox generalization",
+  "ground_truth": "oracle render pass used only for supervised training/evaluation"
+}

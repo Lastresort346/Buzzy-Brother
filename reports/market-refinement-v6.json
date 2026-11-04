@@ -1,0 +1,580 @@
+{
+  "corrections": [
+    {
+      "seed": 9400,
+      "capacity": 300,
+      "stickers": 3,
+      "limited_sold_out": true,
+      "wallet": 23,
+      "initial_pollen": 180,
+      "spawn_y": 23.5,
+      "collected": 420,
+      "converted": 600,
+      "fit": {
+        "examples": 1792,
+        "steps": 800,
+        "training_movement_accuracy": 0.9849330357142857,
+        "source": "privileged training demonstrations; never a runtime controller"
+      }
+    },
+    {
+      "seed": 9401,
+      "capacity": 300,
+      "stickers": 4,
+      "limited_sold_out": true,
+      "wallet": 7,
+      "collected": 570,
+      "converted": 300,
+      "fit": {
+        "examples": 1984,
+        "steps": 800,
+        "training_movement_accuracy": 0.985383064516129,
+        "source": "privileged training demonstrations; never a runtime controller"
+      }
+    },
+    {
+      "seed": 9402,
+      "capacity": 300,
+      "stickers": 6,
+      "limited_sold_out": true,
+      "wallet": 30,
+      "collected": 542,
+      "converted": 300,
+      "fit": {
+        "examples": 2176,
+        "steps": 800,
+        "training_movement_accuracy": 0.9852941176470589,
+        "source": "privileged training demonstrations; never a runtime controller"
+      }
+    },
+    {
+      "seed": 9403,
+      "capacity": 300,
+      "collected": 506,
+      "converted": 300,
+      "fit": {
+        "examples": 2368,
+        "steps": 800,
+        "training_movement_accuracy": 0.9852195945945946,
+        "source": "privileged training demonstrations; never a runtime controller"
+      }
+    }
+  ],
+  "held_out": [
+    {
+      "seed": 9500,
+      "capacity": 300,
+      "initial_pollen": 0,
+      "collected": 1159,
+      "converted": 900,
+      "honey_earned": 900,
+      "honey_wallet": 15,
+      "purchases": 9,
+      "owned": [
+        5,
+        3,
+        1
+      ],
+      "initial_purchases": 0,
+      "purchase_utility": 36.75018402649982,
+      "honey_spent": 885,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -1.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -10.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ]
+      ],
+      "mean_fill_at_conversion": 1.0,
+      "longest_full_bag_wait_seconds": 3.0,
+      "longest_boundary_stay_seconds": 0.0,
+      "last_30_seconds_collected": 262,
+      "last_30_seconds_converted": 300
+    },
+    {
+      "seed": 9501,
+      "capacity": 300,
+      "initial_pollen": 0,
+      "collected": 1174,
+      "converted": 900,
+      "honey_earned": 900,
+      "honey_wallet": 298,
+      "purchases": 3,
+      "owned": [
+        6,
+        3,
+        1
+      ],
+      "initial_purchases": 7,
+      "purchase_utility": 2.7617224880382736,
+      "honey_spent": 625,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -1.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ]
+      ],
+      "mean_fill_at_conversion": 1.0,
+      "longest_full_bag_wait_seconds": 3.0,
+      "longest_boundary_stay_seconds": 0.0,
+      "last_30_seconds_collected": 274,
+      "last_30_seconds_converted": 300
+    },
+    {
+      "seed": 9502,
+      "capacity": 300,
+      "initial_pollen": 0,
+      "collected": 1110,
+      "converted": 900,
+      "honey_earned": 900,
+      "honey_wallet": 406,
+      "purchases": 1,
+      "owned": [
+        7,
+        3,
+        1
+      ],
+      "initial_purchases": 10,
+      "purchase_utility": 0.7142857142857153,
+      "honey_spent": 524,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -1.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -8.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -5.5
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ]
+      ],
+      "mean_fill_at_conversion": 1.0,
+      "longest_full_bag_wait_seconds": 3.0,
+      "longest_boundary_stay_seconds": 0.0,
+      "last_30_seconds_collected": 247,
+      "last_30_seconds_converted": 300
+    },
+    {
+      "seed": 9503,
+      "capacity": 60,
+      "initial_pollen": 60,
+      "collected": 300,
+      "converted": 300,
+      "honey_earned": 300,
+      "honey_wallet": 60,
+      "purchases": 3,
+      "owned": [
+        0,
+        3,
+        0
+      ],
+      "initial_purchases": 0,
+      "purchase_utility": 18.0,
+      "honey_spent": 240,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -1.5
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          -1.5
+        ],
+        [
+          -10.0,
+          -10.5
+        ],
+        [
+          -10.0,
+          -13.5
+        ],
+        [
+          -10.0,
+          -1.5
+        ],
+        [
+          -10.0,
+          -10.5
+        ],
+        [
+          -10.0,
+          -9.0
+        ],
+        [
+          -10.0,
+          -4.5
+        ],
+        [
+          -10.0,
+          -15.0
+        ]
+      ],
+      "mean_fill_at_conversion": 1.0,
+      "longest_full_bag_wait_seconds": 2.75,
+      "longest_boundary_stay_seconds": 0.0,
+      "last_30_seconds_collected": 300,
+      "last_30_seconds_converted": 300
+    }
+  ],
+  "promoted": true,
+  "method": "Supervised corrections of student-visited states after initial BC + RL; no teacher in held-out evaluation",
+  "scope": "Fixed corridor; expensive items require saving across trips. No proof of economic optimality."
+}

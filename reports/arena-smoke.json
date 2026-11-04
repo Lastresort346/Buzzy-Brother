@@ -1,0 +1,51 @@
+{
+  "status": "passed",
+  "controller": "scripted acceptance route; no learned policy",
+  "observation_shape": [
+    100,
+    160,
+    3
+  ],
+  "camera_pixels_changed": true,
+  "first_harvest_reward": 100.0,
+  "dipper_cooldown_respected": true,
+  "config": {
+    "seed": 42,
+    "dt": 0.016666666666666666,
+    "half_size": 24,
+    "speed": 6,
+    "radius": 0.42,
+    "height": 1.55,
+    "jump_speed": 7,
+    "gravity": 20,
+    "dipper_cooldown": 0.8,
+    "dipper_radius": 2,
+    "camera_locked": true,
+    "camera_distance": 18,
+    "camera_pitch": 34,
+    "min_camera_distance": 8,
+    "max_camera_distance": 20,
+    "episode_seconds": 600
+  },
+  "final_diagnostics": {
+    "position": [
+      -9.99999999999998,
+      0.9999999999999669,
+      0.0
+    ],
+    "grounded": true,
+    "heading_degrees": -0.0,
+    "pollen": 100,
+    "dipper_ready": false,
+    "cooldown_seconds": 0.016666666666665938,
+    "tick": 298,
+    "simulation_seconds": 4.966666666666667,
+    "seed": 42,
+    "swings": 1,
+    "successful_swings": 1,
+    "camera_locked": true,
+    "camera_distance": 18,
+    "camera_yaw_degrees": 0.0,
+    "camera_pitch_degrees": 34
+  }
+}

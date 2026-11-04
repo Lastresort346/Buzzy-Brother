@@ -1,0 +1,469 @@
+{
+  "selected_checkpoint": "models\\controller-market-v5-student-success.npz",
+  "deployed_checkpoint": "models/controller-market-v5.npz",
+  "sha256": "f4921bc27a750536c7325d15d7e05c3dd2f94e711341ff57b53489df36f504d6",
+  "validation": [
+    {
+      "seed": 42,
+      "capacity": 300,
+      "initial_pollen": 0,
+      "collected": 2841,
+      "converted": 2683,
+      "honey_earned": 2683,
+      "honey_wallet": 957,
+      "purchases": 11,
+      "owned": [
+        7,
+        3,
+        1
+      ],
+      "initial_purchases": 0,
+      "purchase_utility": 38.26446974078553,
+      "honey_spent": 1726,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -2.5
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -5.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          3.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -8.5
+        ],
+        [
+          -10.0,
+          -8.5
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          2.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          2.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ]
+      ],
+      "longest_full_bag_wait_seconds": 3.0,
+      "longest_boundary_stay_seconds": 0.0,
+      "last_30_seconds_collected": 496,
+      "last_30_seconds_converted": 338
+    },
+    {
+      "seed": 9700,
+      "capacity": 300,
+      "initial_pollen": 0,
+      "collected": 2630,
+      "converted": 2593,
+      "honey_earned": 2593,
+      "honey_wallet": 867,
+      "purchases": 11,
+      "owned": [
+        7,
+        3,
+        1
+      ],
+      "initial_purchases": 0,
+      "purchase_utility": 38.26446974078553,
+      "honey_spent": 1726,
+      "full_cycle": true,
+      "last_position": [
+        -10.0,
+        -16.0
+      ],
+      "position_samples": [
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -11.5
+        ],
+        [
+          -10.0,
+          -8.5
+        ],
+        [
+          -10.0,
+          -8.5
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -14.5
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -10.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -10.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -1.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          0.5
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -7.0
+        ],
+        [
+          -10.0,
+          -13.0
+        ],
+        [
+          -10.0,
+          -4.0
+        ],
+        [
+          -10.0,
+          -16.0
+        ],
+        [
+          -10.0,
+          -2.5
+        ]
+      ],
+      "longest_full_bag_wait_seconds": 3.0,
+      "longest_boundary_stay_seconds": 0.0,
+      "last_30_seconds_collected": 373,
+      "last_30_seconds_converted": 468
+    }
+  ],
+  "promoted": true,
+  "reason": "The final supervised fit regressed. Restore the earlier checkpoint that sustained collection/conversion/purchases in both 200-second validation trials.",
+  "training": "Demonstration warm-up, reward fine-tuning, and supervised corrections of student-visited states. Teacher absent at evaluation and runtime.",
+  "limits": "Two fixed-corridor validation seeds; no claim of general navigation, economic optimality, or isolated causal effect of purchase reward."
+}
