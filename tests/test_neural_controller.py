@@ -20,6 +20,19 @@ def fixture():
 
 
 class NeuralControllerTests(unittest.TestCase):
+    def test_event_driven_recurrent_input_matches_summing_every_edge(self):
+        rng=np.random.default_rng(3)
+        n=60
+        pre=rng.integers(0,n,400).astype(np.int32)
+        post=rng.integers(0,n,400).astype(np.int32)
+        graph=ConnectomeGraph([str(i) for i in range(n)],['optic']*20+['descending']*10+['central']*30,
+                              pre,post,rng.uniform(.1,1,400),np.arange(20),np.arange(20,30),'synthetic-test-only',400)
+        brain=NeuralController(graph)
+        for density in (0,.1,.5,1):
+            spikes=rng.random(n)<density
+            dense=np.bincount(graph.post,weights=graph.weights*spikes[graph.pre],minlength=n)
+            np.testing.assert_allclose(brain.recurrent_input(spikes),dense,atol=1e-12)
+
     def test_public_shop_state_changes_sensory_firing_without_image_changes(self):
         graph=fixture()
         graph.groups[-13:]=['sensory_ascending']*13

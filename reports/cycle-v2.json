@@ -1,0 +1,102 @@
+{
+  "stage": "cycle retrain: swing only when a ready flower is in reach, DAgger from varied starts",
+  "base_checkpoint": "models\\controller-cycle-v1.npz",
+  "rounds": 3,
+  "labelled_decisions": 5760,
+  "before": {
+    "episodes": [
+      {
+        "start": "hive",
+        "initial_pollen": 0,
+        "seconds": 100.0,
+        "pollen_collected": 900,
+        "pollen_converted": 600,
+        "honey_earned": 600,
+        "swings": 82,
+        "dry_swing_fraction": 0.329,
+        "longest_idle_seconds": 2.25
+      },
+      {
+        "start": [
+          7.912410209157681,
+          -12.855455944278406
+        ],
+        "initial_pollen": 0,
+        "seconds": 100.0,
+        "pollen_collected": 370,
+        "pollen_converted": 300,
+        "honey_earned": 300,
+        "swings": 102,
+        "dry_swing_fraction": 0.667,
+        "longest_idle_seconds": 2.75
+      },
+      {
+        "start": [
+          -8.574658610323873,
+          13.475974354867489
+        ],
+        "initial_pollen": 150,
+        "seconds": 100.0,
+        "pollen_collected": 150,
+        "pollen_converted": 0,
+        "honey_earned": 0,
+        "swings": 28,
+        "dry_swing_fraction": 0.464,
+        "longest_idle_seconds": 3.0
+      }
+    ],
+    "honey_earned": 900,
+    "pollen_collected": 1420,
+    "mean_dry_swing_fraction": 0.487,
+    "worst_idle_seconds": 3.0
+  },
+  "after": {
+    "episodes": [
+      {
+        "start": "hive",
+        "initial_pollen": 0,
+        "seconds": 100.0,
+        "pollen_collected": 300,
+        "pollen_converted": 0,
+        "honey_earned": 0,
+        "swings": 34,
+        "dry_swing_fraction": 0.676,
+        "longest_idle_seconds": 3.0
+      },
+      {
+        "start": [
+          7.912410209157681,
+          -12.855455944278406
+        ],
+        "initial_pollen": 0,
+        "seconds": 100.0,
+        "pollen_collected": 900,
+        "pollen_converted": 615,
+        "honey_earned": 615,
+        "swings": 96,
+        "dry_swing_fraction": 0.479,
+        "longest_idle_seconds": 3.25
+      },
+      {
+        "start": [
+          -8.574658610323873,
+          13.475974354867489
+        ],
+        "initial_pollen": 150,
+        "seconds": 100.0,
+        "pollen_collected": 150,
+        "pollen_converted": 0,
+        "honey_earned": 0,
+        "swings": 11,
+        "dry_swing_fraction": 0.273,
+        "longest_idle_seconds": 26.25
+      }
+    ],
+    "honey_earned": 615,
+    "pollen_collected": 1350,
+    "mean_dry_swing_fraction": 0.476,
+    "worst_idle_seconds": 26.25
+  },
+  "teacher": "training-only, reads true flower state",
+  "scope": "imitation only; fixed 6-field layout; no sprouts in this stage"
+}

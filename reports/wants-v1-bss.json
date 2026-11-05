@@ -1,0 +1,132 @@
+{
+  "eye": "bss",
+  "checkpoint": "models\\controller-cycle-v1.npz",
+  "rows": [
+    {
+      "want_color": "blue",
+      "want_field": null,
+      "pollen_collected": 300,
+      "pollen_by_color": {
+        "blue": 300,
+        "white": 0,
+        "red": 0
+      },
+      "ended_near": "BLUE FIELD",
+      "seconds_per_decision": 1.409,
+      "mind": {
+        "want_field": null,
+        "want_color": "blue",
+        "mode": "deliver",
+        "needs": {
+          "deliver": 1.0,
+          "collect": 0.0
+        }
+      }
+    },
+    {
+      "want_color": "white",
+      "want_field": null,
+      "pollen_collected": 300,
+      "pollen_by_color": {
+        "blue": 300,
+        "white": 0,
+        "red": 0
+      },
+      "ended_near": "BLUE FIELD",
+      "seconds_per_decision": 1.374,
+      "mind": {
+        "want_field": null,
+        "want_color": "white",
+        "mode": "deliver",
+        "needs": {
+          "deliver": 1.0,
+          "collect": 0.0
+        }
+      }
+    },
+    {
+      "want_color": "red",
+      "want_field": null,
+      "pollen_collected": 0,
+      "pollen_by_color": {
+        "blue": 0,
+        "white": 0,
+        "red": 0
+      },
+      "ended_near": "ROSE FIELD",
+      "seconds_per_decision": 1.35,
+      "mind": {
+        "want_field": null,
+        "want_color": "red",
+        "mode": "collect",
+        "needs": {
+          "deliver": 0.0,
+          "collect": 1.0
+        }
+      }
+    },
+    {
+      "want_color": null,
+      "want_field": "ROSE FIELD",
+      "pollen_collected": 300,
+      "pollen_by_color": {
+        "blue": 150,
+        "white": 0,
+        "red": 150
+      },
+      "ended_near": "BLUE FIELD",
+      "seconds_per_decision": 1.319,
+      "mind": {
+        "want_field": "ROSE FIELD",
+        "want_color": null,
+        "mode": "deliver",
+        "needs": {
+          "deliver": 1.0,
+          "collect": 0.0
+        }
+      }
+    },
+    {
+      "want_color": null,
+      "want_field": "SOUTH FIELD",
+      "pollen_collected": 126,
+      "pollen_by_color": {
+        "blue": 0,
+        "white": 126,
+        "red": 0
+      },
+      "ended_near": "SOUTH FIELD",
+      "seconds_per_decision": 1.476,
+      "mind": {
+        "want_field": "SOUTH FIELD",
+        "want_color": null,
+        "mode": "collect",
+        "needs": {
+          "deliver": 0.17639999999999997,
+          "collect": 0.5800000000000001
+        }
+      }
+    },
+    {
+      "want_color": null,
+      "want_field": null,
+      "pollen_collected": 300,
+      "pollen_by_color": {
+        "blue": 300,
+        "white": 0,
+        "red": 0
+      },
+      "ended_near": "BLUE FIELD",
+      "seconds_per_decision": 1.721,
+      "mind": {
+        "want_field": null,
+        "want_color": null,
+        "mode": "deliver",
+        "needs": {
+          "deliver": 1.0,
+          "collect": 0.0
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,294 @@
+{
+  "stage": "go to commanded field and fill a 300 bag; no hive",
+  "policy_inputs": "RGB, public status, recalled memory cue; no world coordinates",
+  "teacher": "training-only, reads true field centers",
+  "memory_node_error_units": {
+    "BLUE FIELD": 1.05,
+    "WHITE FIELD": 0.45,
+    "ROSE FIELD": 0.76,
+    "EAST FIELD": 0.74,
+    "SOUTH FIELD": 0.87,
+    "NORTH-WEST FIELD": 0.72
+  },
+  "fit": {
+    "examples": 1049,
+    "navigation_movement_accuracy": 0.8484270734032412
+  },
+  "with_memory": {
+    "quests": 12,
+    "filled_at_goal": 10,
+    "mean_seconds_to_fill": 23.775
+  },
+  "goal_cue_removed": {
+    "quests": 12,
+    "filled_at_goal": 2,
+    "mean_seconds_to_fill": 23.0
+  },
+  "episodes": [
+    {
+      "goal": "BLUE FIELD",
+      "seed": 9500,
+      "cue": true,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "WHITE FIELD",
+      "seed": 9500,
+      "cue": true,
+      "filled": true,
+      "decisions": 97,
+      "seconds_to_fill": 24.25,
+      "collected": 300,
+      "ended_at": "WHITE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "ROSE FIELD",
+      "seed": 9500,
+      "cue": true,
+      "filled": true,
+      "decisions": 39,
+      "seconds_to_fill": 9.75,
+      "collected": 300,
+      "ended_at": "ROSE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "EAST FIELD",
+      "seed": 9500,
+      "cue": true,
+      "filled": true,
+      "decisions": 116,
+      "seconds_to_fill": 29.0,
+      "collected": 300,
+      "ended_at": "EAST FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "SOUTH FIELD",
+      "seed": 9500,
+      "cue": true,
+      "filled": true,
+      "decisions": 119,
+      "seconds_to_fill": 29.75,
+      "collected": 300,
+      "ended_at": "SOUTH FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "NORTH-WEST FIELD",
+      "seed": 9500,
+      "cue": true,
+      "filled": false,
+      "decisions": 400,
+      "seconds_to_fill": null,
+      "collected": 160,
+      "ended_at": "NORTH-WEST FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "BLUE FIELD",
+      "seed": 9501,
+      "cue": true,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "WHITE FIELD",
+      "seed": 9501,
+      "cue": true,
+      "filled": true,
+      "decisions": 116,
+      "seconds_to_fill": 29.0,
+      "collected": 300,
+      "ended_at": "WHITE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "ROSE FIELD",
+      "seed": 9501,
+      "cue": true,
+      "filled": true,
+      "decisions": 26,
+      "seconds_to_fill": 6.5,
+      "collected": 300,
+      "ended_at": "ROSE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "EAST FIELD",
+      "seed": 9501,
+      "cue": true,
+      "filled": true,
+      "decisions": 125,
+      "seconds_to_fill": 31.25,
+      "collected": 300,
+      "ended_at": "EAST FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "SOUTH FIELD",
+      "seed": 9501,
+      "cue": true,
+      "filled": true,
+      "decisions": 113,
+      "seconds_to_fill": 28.25,
+      "collected": 300,
+      "ended_at": "SOUTH FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "NORTH-WEST FIELD",
+      "seed": 9501,
+      "cue": true,
+      "filled": false,
+      "decisions": 400,
+      "seconds_to_fill": null,
+      "collected": 170,
+      "ended_at": "NORTH-WEST FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "BLUE FIELD",
+      "seed": 9500,
+      "cue": false,
+      "filled": true,
+      "decisions": 84,
+      "seconds_to_fill": 21.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "WHITE FIELD",
+      "seed": 9500,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "ROSE FIELD",
+      "seed": 9500,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "EAST FIELD",
+      "seed": 9500,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "SOUTH FIELD",
+      "seed": 9500,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "NORTH-WEST FIELD",
+      "seed": 9500,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "BLUE FIELD",
+      "seed": 9501,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": true
+    },
+    {
+      "goal": "WHITE FIELD",
+      "seed": 9501,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "ROSE FIELD",
+      "seed": 9501,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "EAST FIELD",
+      "seed": 9501,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "SOUTH FIELD",
+      "seed": 9501,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    },
+    {
+      "goal": "NORTH-WEST FIELD",
+      "seed": 9501,
+      "cue": false,
+      "filled": true,
+      "decisions": 100,
+      "seconds_to_fill": 25.0,
+      "collected": 300,
+      "ended_at": "BLUE FIELD",
+      "at_goal": false
+    }
+  ],
+  "scope": "fixed 6-field layout, hive start; drift is only corrected at the hive"
+}

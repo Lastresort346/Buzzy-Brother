@@ -46,7 +46,9 @@ class ThirdPersonVision:
         self.effective_mask=tuple(self.avatar_mask)
         self.semantic_mask=None
 
-    def encode(self,image,camera_geometry=None):
+    def encode(self,image,camera_geometry=None,attention=None):
+        """`attention` (color -> gain), set by the thinking center, scales how strongly detected flowers of each
+        color drive the optic neurons; it needs a perception that can name colors (FlowerEye)."""
         image=np.asarray(image)
         if image.ndim!=3 or image.shape[2]!=3 or image.shape[0]<self.rows or image.shape[1]<self.columns:
             raise ValueError('RGB frame is smaller than the spatial input grid')
@@ -80,6 +82,12 @@ class ThirdPersonVision:
             self.semantic_mask=semantic[yi[:,None],xi[None,:]]
             self.semantic_mask[~valid]=0
             flower_pixels=probability[yi[:,None],xi[None,:],1]*(self.semantic_mask==1)
+            if attention and hasattr(self.perception,'colors'):
+                masks=self.perception.colors()
+                gain=np.full(next(iter(masks.values())).shape,min(attention.values()))  # unnamed flower pixels count as unwanted
+                for color,mask in masks.items():
+                    gain[mask]=attention.get(color,1.)
+                flower_pixels=flower_pixels*gain[yi[:,None],xi[None,:]]
             hive_pixels=probability[yi[:,None],xi[None,:],2]*(self.semantic_mask==2)
         ys=np.linspace(0,height,self.rows+1).astype(int)
         xs=np.linspace(0,width,self.columns+1).astype(int)

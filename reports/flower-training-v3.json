@@ -1,0 +1,42 @@
+{
+  "train_scenes": 120,
+  "samples": 0,
+  "steps": 2500,
+  "hidden": 64,
+  "held_out_scenes": 30,
+  "new_model": {
+    "flower_precision": 0.7095,
+    "flower_recall": 0.7926,
+    "flower_iou": 0.5984,
+    "negatives_called_flower": {
+      "token": 0.1983,
+      "fake_flower": 0.1189,
+      "recolored_sprite": 0.247,
+      "other": 0.0231
+    }
+  },
+  "previous_arena_model_on_same_scenes": {
+    "flower_precision": 0.5921,
+    "flower_recall": 0.1889,
+    "flower_iou": 0.1672,
+    "negatives_called_flower": {
+      "token": 0.2517,
+      "fake_flower": 0.2147,
+      "recolored_sprite": 0.197,
+      "other": 0.0586
+    }
+  },
+  "arena_frames_with_sprout_tokens": {
+    "new_model": {
+      "token_pixels": 4792,
+      "token_pixels_called_flower": 0.0,
+      "arena_flower_recall": 0.4492
+    },
+    "previous_arena_model": {
+      "token_pixels": 1191,
+      "token_pixels_called_flower": 1.0,
+      "arena_flower_recall": 0.8513
+    }
+  },
+  "scope": "synthetic-to-synthetic held-out scenes; not measured on real Roblox frames"
+}

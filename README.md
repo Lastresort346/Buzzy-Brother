@@ -20,6 +20,10 @@ The **640 × 400 third-person camera** feeds trained flower/hive recognition, a
 24 × 16 spatial grid, directional motion, and avatar masking. The monitor includes
 camera, recognition, and motion previews. See [docs/COLLECTION_TRAINING.md](docs/COLLECTION_TRAINING.md).
 
+The arena has six fields and a path-integration **field memory** so the bee can be told
+to go to a named field and fill its bag (`--goal "ROSE FIELD"`). See
+[docs/FIELD_MEMORY.md](docs/FIELD_MEMORY.md).
+
 ## Neural control and live monitor
 
 After installing the arena dependencies and acquiring/building the connectome:

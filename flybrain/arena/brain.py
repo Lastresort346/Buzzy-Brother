@@ -128,6 +128,13 @@ class NeuralController:
         self.last_counts=np.zeros(n,dtype=np.int32)
         self.refractory=np.zeros(n,dtype=np.int8)
         self.adaptation=np.zeros(n)
+        # Edges sorted by presynaptic neuron: each step then sums only the neurons that spiked
+        # (about a tenth of them), which is several times faster than all edges and gives the same result.
+        order=np.argsort(graph.pre,kind='stable')
+        self._edge_post=graph.post[order]
+        self._edge_weight=graph.weights[order]
+        self._edge_start=np.zeros(n+1,dtype=np.int64)
+        np.cumsum(np.bincount(graph.pre,minlength=n),out=self._edge_start[1:])
         self.pool=self.rng.integers(0,self.motor_features,size=len(graph.motor))
         self.pool_sizes=np.maximum(1,np.bincount(self.pool,minlength=self.motor_features))
         self.threshold=self.rng.uniform(.85,1.15,size=n)
@@ -150,6 +157,9 @@ class NeuralController:
         self.weights[11,-1]=-.4
         self.weights[12:,-1]=[1.,-1.,-1.,-1.]
         self.eligibility=np.zeros_like(self.weights)
+        # Goal-conditioned steering from the field-memory cue; separate so older checkpoints still load.
+        self.nav_weights=np.zeros((9,4))
+        self.nav_eligibility=np.zeros((9,4))
         self.baseline=0.
         self.update_count=0
         self.decisions=0
@@ -167,13 +177,22 @@ class NeuralController:
     def previous_image(self):
         return self.vision.previous_luminance
 
-    def encode(self,image,camera_geometry=None):
-        return self.vision.encode(image,camera_geometry)
+    def encode(self,image,camera_geometry=None,attention=None):
+        return self.vision.encode(image,camera_geometry,attention)
 
-    def act(self,image,seconds=.25,camera_geometry=None,inventory=None):
+    def recurrent_input(self,spikes):
+        """Summed synaptic input per neuron from the neurons that spiked."""
+        active=np.flatnonzero(spikes)
+        if not len(active):
+            return np.zeros(len(self.v))
+        lengths=self._edge_start[active+1]-self._edge_start[active]
+        edges=np.repeat(self._edge_start[active]-(np.cumsum(lengths)-lengths),lengths)+np.arange(lengths.sum())
+        return np.bincount(self._edge_post[edges],weights=self._edge_weight[edges],minlength=len(self.v))
+
+    def act(self,image,seconds=.25,camera_geometry=None,inventory=None,goal_cue=None,attention=None):
         if not np.isfinite(seconds) or seconds<=0:
             raise ValueError('seconds must be finite and positive')
-        optic_drives=self.encode(image,camera_geometry)
+        optic_drives=self.encode(image,camera_geometry,attention)
         g=self.graph
         drive=np.full(len(self.v),.95)
         drive[g.sensory]=.55+3.8*optic_drives
@@ -195,7 +214,7 @@ class NeuralController:
         counts=np.zeros(len(self.v),dtype=np.int32)
         steps=max(1,round(seconds/self.neural_dt))
         for _ in range(steps):
-            recurrent=np.bincount(g.post,weights=g.weights*self.spikes[g.pre],minlength=len(self.v))
+            recurrent=self.recurrent_input(self.spikes)
             current=drive+4*recurrent+self.rng.normal(0,.10,size=len(self.v))
             self.adaptation*=np.exp(-self.neural_dt/.250)
             self.refractory=np.maximum(0,self.refractory-1)
@@ -219,7 +238,11 @@ class NeuralController:
             events=self._pending_feedback
             self._pending_feedback=None
             self.feedback(**events,next_features=features)
+        cue=np.zeros(4) if goal_cue is None else np.asarray(goal_cue,dtype=float)
+        if cue.shape!=(4,) or not np.isfinite(cue).all():
+            raise ValueError('Expected a 4-value goal cue')
         logits=self.weights@features
+        logits[:9]+=self.nav_weights@cue
         exp=np.exp(logits[:9]-np.max(logits[:9]))
         probs=exp/exp.sum()
         chosen=int(self.rng.choice(9,p=probs)) if self.sample_actions else int(np.argmax(probs))
@@ -241,6 +264,9 @@ class NeuralController:
         gradient[12:16]=-purchase_probs[:,None]*features
         gradient[12+buy]+=features
         self.eligibility=.94*self.eligibility+gradient
+        move_error=-probs
+        move_error[chosen]+=1
+        self.nav_eligibility=.94*self.nav_eligibility+move_error[:,None]*cue[None,:]
         self.last_features=features
         self.last_probs=probs
         self.action_index=chosen
@@ -248,7 +274,7 @@ class NeuralController:
         self.decisions+=1
         return self.last_action
 
-    def fit_demonstrations(self,features,actions,steps=600,seed=123):
+    def fit_demonstrations(self,features,actions,steps=600,seed=123,balance=1.0):
         """Training-only behavior cloning of an explicitly labelled teacher dataset."""
         x=np.asarray(features,dtype=float)
         if x.shape!=(len(actions),self.feature_count+1) or not len(actions):
@@ -256,7 +282,8 @@ class NeuralController:
         move=np.array([next(i for i,(sx,fy) in enumerate(MOVES) if sx==a.strafe and fy==a.forward) for a in actions])
         binary=np.array([[a.dip,a.jump,a.convert] for a in actions],dtype=float)
         buy=np.array([a.buy for a in actions])
-        binary_weight=np.minimum(12,(len(actions)-binary.sum(axis=0))/np.maximum(1,binary.sum(axis=0)))
+        # `balance` < 1 softens how hard rare dip/jump/convert labels are up-weighted (1 = full class balance).
+        binary_weight=np.minimum(12,((len(actions)-binary.sum(axis=0))/np.maximum(1,binary.sum(axis=0)))**balance)
         buy_weight=np.minimum(12,np.sqrt(len(actions)/np.maximum(1,np.bincount(buy,minlength=4))))
         rng=np.random.default_rng(seed)
         m=np.zeros_like(self.weights)
@@ -285,6 +312,24 @@ class NeuralController:
         return {'examples':len(actions),'steps':steps,'training_movement_accuracy':float(np.mean(predicted==move)),
                 'source':'privileged training demonstrations; never a runtime controller'}
 
+    def fit_navigation(self,features,cues,actions,steps=600,seed=321):
+        """Training-only: fit the goal-cue steering weights with the main readout held fixed."""
+        x,c=np.asarray(features,dtype=float),np.asarray(cues,dtype=float)
+        move=np.array([next(i for i,(sx,fy) in enumerate(MOVES) if sx==a.strafe and fy==a.forward) for a in actions])
+        if x.shape!=(len(actions),self.feature_count+1) or c.shape!=(len(actions),4):
+            raise ValueError('Navigation examples do not match this readout')
+        base=x@self.weights[:9].T
+        rng=np.random.default_rng(seed)
+        for _ in range(steps):
+            idx=rng.integers(0,len(x),size=min(256,len(x)))
+            logits=base[idx]+c[idx]@self.nav_weights.T
+            p=np.exp(logits-logits.max(axis=1,keepdims=True))
+            p/=p.sum(axis=1,keepdims=True)
+            p[np.arange(len(idx)),move[idx]]-=1
+            self.nav_weights-=.1*(p.T@c[idx]/len(idx)+.001*self.nav_weights)
+        predicted=np.argmax(base+c@self.nav_weights.T,axis=1)
+        return {'examples':len(actions),'navigation_movement_accuracy':float(np.mean(predicted==move))}
+
     def queue_feedback(self,reward,empty_dips=0,blocked_fraction=0,honey=0,purchases=0,full_wait=0,progress=0):
         if self.decisions:
             if self._pending_feedback is not None:
@@ -305,6 +350,8 @@ class NeuralController:
             # Experimental reward-modulated policy gradient; connectivity remains fixed.
             self.weights+=.012*np.clip(delta,-2,2)*np.clip(self.eligibility,-4,4)
             np.clip(self.weights,-12,12,out=self.weights)
+            self.nav_weights+=.012*np.clip(delta,-2,2)*np.clip(self.nav_eligibility,-4,4)
+            np.clip(self.nav_weights,-12,12,out=self.nav_weights)
             self.update_count+=1
         self.last_reward=float(reward)
         self.last_delta=delta
@@ -318,6 +365,7 @@ class NeuralController:
         self.refractory.fill(0)
         self.adaptation.fill(0)
         self.eligibility.fill(0)
+        self.nav_eligibility.fill(0)
         self.vision.reset()
         self.last_action=Action()
         self.baseline=0
@@ -338,16 +386,16 @@ class NeuralController:
         metadata['conversion_control']='E rising-edge toggle; automatic simulated-bee batches until empty'
         metadata['readout_architecture']='neural-regions-and-public-status-v5'
         metadata['reward_system']=self.reward_system.snapshot()
-        np.savez_compressed(path,weights=self.weights,value_weights=self.reward_system.value_weights,metadata=json.dumps(metadata))
+        np.savez_compressed(path,weights=self.weights,nav_weights=self.nav_weights,value_weights=self.reward_system.value_weights,metadata=json.dumps(metadata))
 
-    def load(self,path,allow_migration=False):
+    def load(self,path,allow_migration=False,allow_perception_change=False):
         with np.load(path,allow_pickle=False) as stored:
             metadata=json.loads(str(stored['metadata']))
             if metadata['root_ids']!=self.graph.root_ids or metadata['source_identity']!=self.graph.source_identity:
                 raise ValueError('Checkpoint graph differs from this controller')
             if metadata['seed']!=self.seed or metadata['encoding']['version']!=self.vision.version:
                 raise ValueError('Checkpoint seed or visual encoder differs')
-            if metadata['encoding'].get('perception_model')!=self.vision.snapshot()['perception_model']:
+            if not allow_perception_change and metadata['encoding'].get('perception_model')!=self.vision.snapshot()['perception_model']:
                 raise ValueError('Checkpoint perception model differs')
             weights=stored['weights']
             value=stored['value_weights']
@@ -364,6 +412,8 @@ class NeuralController:
             else:
                 self.weights[:]=weights
                 self.reward_system.value_weights[:]=value
+            if 'nav_weights' in stored.files:
+                self.nav_weights[:]=stored['nav_weights']
             self.update_count=int(metadata['updates'])
             self.decisions=int(metadata['decisions'])
 

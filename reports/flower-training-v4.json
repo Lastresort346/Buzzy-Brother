@@ -1,0 +1,101 @@
+{
+  "train_scenes": 180,
+  "samples": 1481873,
+  "steps": 4000,
+  "hidden": 96,
+  "context_features": true,
+  "held_out_scenes": 30,
+  "new_model": {
+    "flower_precision": 0.6861,
+    "flower_recall": 0.8453,
+    "flower_iou": 0.6095,
+    "negatives_called_flower": {
+      "token": 0.1846,
+      "fake_flower": 0.1152,
+      "recolored_sprite": 0.1992,
+      "other": 0.0222
+    }
+  },
+  "new_model_after_shape_cleanup": {
+    "flower_precision": 0.7798,
+    "flower_recall": 0.7046,
+    "flower_iou": 0.5876,
+    "negatives_called_flower": {
+      "token": 0.0804,
+      "fake_flower": 0.032,
+      "recolored_sprite": 0.0936,
+      "other": 0.0066
+    }
+  },
+  "previous_arena_model_on_same_scenes": {
+    "flower_precision": 0.5921,
+    "flower_recall": 0.1889,
+    "flower_iou": 0.1672,
+    "negatives_called_flower": {
+      "token": 0.2517,
+      "fake_flower": 0.2147,
+      "recolored_sprite": 0.197,
+      "other": 0.0586
+    }
+  },
+  "real_screenshots_fraction_called_flower": {
+    "2.png": {
+      "raw": 0.121,
+      "cleaned": 0.0925,
+      "previous": 0.0049
+    },
+    "3.png": {
+      "raw": 0.3015,
+      "cleaned": 0.2601,
+      "previous": 0.0007
+    },
+    "4.png": {
+      "raw": 0.17,
+      "cleaned": 0.1439,
+      "previous": 0.0453
+    },
+    "5.png": {
+      "raw": 0.1945,
+      "cleaned": 0.1705,
+      "previous": 0.0009
+    },
+    "detect-2.png": {
+      "raw": 0.1706,
+      "cleaned": 0.1255,
+      "previous": 0.0044
+    },
+    "detect-3.png": {
+      "raw": 0.4276,
+      "cleaned": 0.3625,
+      "previous": 0.0005
+    },
+    "detect-4.png": {
+      "raw": 0.2099,
+      "cleaned": 0.123,
+      "previous": 0.1103
+    },
+    "detect-5.png": {
+      "raw": 0.2625,
+      "cleaned": 0.2125,
+      "previous": 0.001
+    }
+  },
+  "arena_frames_with_sprout_tokens": {
+    "new_model": {
+      "token_pixels": 4792,
+      "token_pixels_called_flower": 0.0,
+      "arena_flower_recall": 0.5622
+    },
+    "new_model_cleaned": {
+      "token_pixels": 4792,
+      "token_pixels_called_flower": 0.0,
+      "arena_flower_recall": 0.3313
+    },
+    "previous_arena_model": {
+      "token_pixels": 1191,
+      "token_pixels_called_flower": 1.0,
+      "arena_flower_recall": 0.8513
+    }
+  },
+  "scope": "synthetic-to-synthetic held-out scenes; not measured on real Roblox frames"
+}

@@ -78,6 +78,8 @@ class NeuralMonitor:
             label=tk.Label(panel,bg=BG)
             label.pack(anchor='w')
             self.preview_labels.append(label)
+        self.talk=tk.Label(self.root,text='',bg=PANEL,fg=TEXT,anchor='w',justify='left',padx=14,pady=6)
+        self.talk.pack(fill='x',padx=22,pady=(4,0))
         self.footer=tk.Label(self.root,text='Happiness is a measured reward/blockage proxy, not evidence of subjective feelings.\n'
                                   'Real source connectivity; experimental encoding, unsigned LIF dynamics, and action learning.',
                              bg=BG,fg=MUTED,justify='left',anchor='w')
@@ -142,6 +144,8 @@ class NeuralMonitor:
               f'prediction error {b.reward_system.prediction_error:+.3f} · phasic signal {b.reward_system.phasic:+.3f}\n'
               f'Reward: purchases {b.reward_system.components["purchases"]:+.2f} · honey {b.reward_system.components["honey"]:+.2f} · '
               f'full wait {b.reward_system.components["full_wait"]:+.3f} · next sticker {a.world.shop.prices[0]}h')
+        c=getattr(a,'comms',None)
+        self.talk.config(text='BEE SAYS (preset sentences from measured state)\n'+('\n'.join(f'{m["t"]:7.1f}s  {m["text"]}' for m in c.latest(3)) if c is not None and c.log else '—'))
         previews=b.vision.previews()
         if previews is not None:
             self.preview_images=[]

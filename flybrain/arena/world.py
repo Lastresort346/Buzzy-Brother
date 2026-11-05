@@ -35,6 +35,13 @@ class ArenaConfig:
     conversion_radius: float = 2.5
     conversion_step_seconds: float = .25
     simulated_bees: int = 5
+    sprout_seconds: float = 0.  # >0 spawns a sprout event this often (0 = events only when started)
+    sprout_tokens: int = 12
+    sprout_pollen: int = 100  # pollen collected inside the field to harvest the sprout
+    sprout_timeout: float = 90.  # an unharvested sprout fades after this long
+    token_radius: float = 1.3
+    token_value: int = 20  # honey per token
+    token_seconds: float = 15.
 
     def __post_init__(self):
         for name in ('dt', 'half_size', 'speed', 'radius', 'height', 'jump_speed',
@@ -101,7 +108,10 @@ class ArenaWorld:
     # Fixed obstacles make resets reproducible; flower variation uses an isolated RNG.
     obstacles = (Obstacle(-4, -5, 3.5, 2, 1), Obstacle(5, -1, 2, 5, 1.4),
                  Obstacle(-15, 10, 3, 3, 1.7), Obstacle(14, 14, 4, 2, .8))
-    patches = ((-10, 1, 0, 'BLUE FIELD'), (10, 5, 1, 'WHITE FIELD'), (0, 15, 2, 'ROSE FIELD'))
+    # The first three are the original fields (kept first so seeds/layouts stay reproducible).
+    # Later fields reuse the recognized flower colors, so identity must come from location.
+    patches = ((-10, 1, 0, 'BLUE FIELD'), (10, 5, 1, 'WHITE FIELD'), (0, 15, 2, 'ROSE FIELD'),
+               (18, -4, 0, 'EAST FIELD'), (10, -16, 1, 'SOUTH FIELD'), (-17, 18, 2, 'NORTH-WEST FIELD'))
 
     def __init__(self, config=None):
         self.config = config or ArenaConfig()
@@ -147,9 +157,72 @@ class ArenaWorld:
         self.camera_pitch = self.config.camera_pitch
         self.camera_distance = self.config.camera_distance
         self.last_gain = 0
+        self.last_color_gain = {}  # pollen just collected per flower color index (what the dipper touched)
         self.last_swing_tick = -1000
+        # Sprout events: a sprout appears in a field and drops collectible tokens. Tokens are only
+        # picked up while `sprout_orders` is set (the trainer's instruction); otherwise they are ignored.
+        self.sprout = None
+        self.tokens = []
+        self.sprout_orders = getattr(self, 'sprout_orders', False)
+        self.event_rng = random.Random(self.seed * 7919 + 1)
+        self.next_sprout = self.config.sprout_seconds
+        self.sprouts_started = 0
+        self.token_honey_total = 0
+        self.last_token_honey = 0
         self.speed_fraction = 0.
         return self.telemetry()
+
+    def start_sprout(self, field=None):
+        """Begin a sprout event in a named (or random) field."""
+        names = [p[3] for p in self.patches]
+        name = names[self.event_rng.randrange(len(names))] if field is None else field
+        cx, cy = next(p[:2] for p in self.patches if p[3] == name)
+        self.sprout = {'field': name, 'x': cx, 'y': cy, 'age': 0., 'spawned': 0, 'progress': 0, 'harvested': False,
+                       'drop_age': 0.}
+        self.tokens = []
+        self.sprouts_started += 1
+
+    def credit_sprout(self, gained):
+        """Pollen collected inside the sprout's field (not merely near it) counts toward harvesting it."""
+        s = self.sprout
+        if s is None or s['harvested'] or not self.sprout_orders or gained <= 0:
+            return
+        if max(abs(self.x - s['x']), abs(self.y - s['y'])) <= 4.5:
+            s['progress'] += gained
+
+    def update_sprout(self):
+        c = self.config
+        if c.sprout_seconds and self.sprout is None and self.tick * c.dt >= self.next_sprout:
+            self.start_sprout()
+        s = self.sprout
+        if s is not None:
+            s['age'] += c.dt
+            if not s['harvested'] and s['progress'] >= c.sprout_pollen:
+                s['harvested'] = True
+            if not s['harvested'] and s['age'] >= c.sprout_timeout:
+                self.sprout = s = None
+                self.next_sprout = self.tick * c.dt + c.sprout_seconds
+        if s is not None and s['harvested']:
+            s['drop_age'] += c.dt
+            if s['spawned'] < c.sprout_tokens and s['drop_age'] >= .5 * (s['spawned'] + 1):
+                s['spawned'] += 1
+                self.tokens.append({'x': s['x'] + self.event_rng.uniform(-3.6, 3.6),
+                                    'y': s['y'] + self.event_rng.uniform(-3.6, 3.6), 'ttl': c.token_seconds})
+        for t in self.tokens:
+            t['ttl'] -= c.dt
+        self.tokens = [t for t in self.tokens if t['ttl'] > 0]
+        self.last_token_honey = 0
+        if self.sprout_orders and self.z < .6:
+            near = [t for t in self.tokens if math.hypot(t['x'] - self.x, t['y'] - self.y) <= c.token_radius]
+            if near:
+                self.tokens = [t for t in self.tokens if t not in near]
+                self.last_token_honey = len(near) * c.token_value
+                self.honey += self.last_token_honey
+                self.honey_earned += self.last_token_honey
+                self.token_honey_total += self.last_token_honey
+        if s is not None and s['harvested'] and s['spawned'] >= c.sprout_tokens and not self.tokens:
+            self.sprout = None
+            self.next_sprout = self.tick * c.dt + c.sprout_seconds
 
     def overlaps(self, x, y, obstacle):
         # Circle against rectangle footprint, avoiding invisible square corner collisions.
@@ -205,8 +278,10 @@ class ArenaWorld:
             self.grounded = False
         for flower in self.flowers:
             flower.pollen = min(1., flower.pollen + c.dt / 12)
+        self.update_sprout()
         self.cooldown = max(0., self.cooldown - c.dt)
         self.last_gain = 0
+        self.last_color_gain = {}
         swung = False
         if action.dip and self.cooldown <= 1e-8:
             swung = True
@@ -223,10 +298,12 @@ class ArenaWorld:
                         if gained<=0:
                             continue
                         self.last_gain += gained
+                        self.last_color_gain[flower.color] = self.last_color_gain.get(flower.color, 0) + gained
                         flower.pollen = max(0.,flower.pollen-gained/10)
                 self.pollen += self.last_gain
                 self.total_collected += self.last_gain
                 self.successful_swings += self.last_gain > 0
+                self.credit_sprout(self.last_gain)
         self.last_converted=0
         if action.convert and not self.previous_convert and self.in_conversion_zone():
             if self.conversion_active:
@@ -273,8 +350,8 @@ class ArenaWorld:
         truncated = self.tick * c.dt >= c.episode_seconds
         info = self.telemetry()
         info.update(swung=swung, collected=self.last_gain,converted_pollen=self.last_converted,
-                    honey_gain=self.last_converted*c.honey_per_pollen,purchase_utility=self.last_purchase_utility)
-        return float(self.last_gain+2*self.last_converted*c.honey_per_pollen+100*self.last_purchase_utility), False, truncated, info
+                    honey_gain=self.last_converted*c.honey_per_pollen+self.last_token_honey,token_honey=self.last_token_honey,purchase_utility=self.last_purchase_utility)
+        return float(self.last_gain+2*(self.last_converted*c.honey_per_pollen+self.last_token_honey)+100*self.last_purchase_utility), False, truncated, info
 
     def in_conversion_zone(self):
         return self.grounded and self.z<.35 and math.hypot(self.x-self.config.hive_x,self.y-self.config.hive_y)<=self.config.conversion_radius
@@ -295,6 +372,10 @@ class ArenaWorld:
                 'total_collected':self.total_collected,'honey':self.honey,'honey_earned':self.honey_earned,
                 'total_converted':self.total_converted,'shop':self.shop.snapshot(self.honey),
                 'last_purchase_status':self.last_purchase_status,
+                'sprout_field':self.sprout['field'] if self.sprout else None,
+                'sprout_progress':self.sprout['progress'] if self.sprout else 0,
+                'sprout_harvested':bool(self.sprout and self.sprout['harvested']),'tokens':len(self.tokens),
+                'token_honey_total':self.token_honey_total,'sprout_orders':self.sprout_orders,
                 'in_conversion_zone':self.in_conversion_zone(),'converting':self.conversion_active,
                 'conversion_status':self.conversion_status,'conversion_steps':self.conversion_steps,
                 'conversion_step_progress':self.conversion_timer/self.config.conversion_step_seconds,

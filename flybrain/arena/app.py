@@ -23,6 +23,9 @@ GRASS = (.36, .58, .32, 1)
 LEAF = (.22, .40, .25, 1)
 CREAM = (.94, .89, .72, 1)
 CHARCOAL = (.16, .20, .21, 1)
+TOKEN_COLOR = (1., .05, .95, 1)  # saturated magenta: unlike any flower, grass or avatar color
+COLOR_NAMES = ('blue','white','red')  # ArenaWorld flower color index -> name
+BANNER_SECONDS = 8.  # how long the sprout notification stays on screen
 FIELD_COLORS = ((.38,.56,.88,1),(.96,.93,.82,1),(.87,.44,.51,1))
 
 
@@ -59,6 +62,15 @@ class ArenaApp(ShowBase):
         self._brain_blocked_steps=0
         self._brain_feedback_steps=0
         self.training_task='manual'
+        self._brain_future=None  # live window only: decision computed off the render thread
+        self._brain_pool=None
+        self.memory=None  # FieldMemory, created with the controller
+        self.color_totals={}  # pollen collected per flower color name since the last reset of this dict
+        self.mind=None  # ThinkingCenter: wants and needs
+        self.eye=None  # FlowerEye when the BSS-trained detector is in use
+        self.sense=None  # SproutSense: banner reader + token direction from pixels
+        self.goal=None  # commanded field name, e.g. 'ROSE FIELD'
+        self.teach=False  # training only: a tutor names the field where collection succeeds
         self._brain_next_tick=0
         self._brain_action=Action()
         self._brain_log=None
@@ -294,7 +306,7 @@ class ArenaApp(ShowBase):
         if self.monitor is not None:
             self.monitor.refresh()
 
-    def connect_brain(self,monitor=True,task='cycle',checkpoint='auto'):
+    def connect_brain(self,monitor=True,task='cycle',checkpoint='auto',eye='arena',want_color=None,want_field=None):
         from .brain import load_graph,NeuralController
         from .telemetry import BehaviorTelemetry
         if self.brain is not None:
@@ -313,14 +325,42 @@ class ArenaApp(ShowBase):
             self.world.pollen=self.world.config.pollen_capacity
         graph=load_graph()
         from .perception import PerceptionModel
-        self.brain=NeuralController(graph,seed=self.world.seed,perception=PerceptionModel.load(),
+        perception=PerceptionModel.load()
+        if eye=='bss':
+            # The BSS-trained flower detector (+ shape cleanup + color) feeds the optic neurons; the arena model keeps the hive.
+            from .flower_eye import FlowerEye
+            from .flower_filter import clean
+            root=Path(__file__).resolve().parents[2]/'models'
+            path=next((p for p in (root/'perception-bss-v5.npz',root/'perception-bss-v4.npz',root/'perception-bss-v3.npz') if p.exists()),None)
+            if path is None:
+                raise FileNotFoundError('No BSS flower detector in models/. Cut your sprite sheet with flybrain.arena.flower_sheet, then run flybrain.arena.train_flowers (see docs/FLOWER_EYE.md).')
+            perception=self.eye=FlowerEye(PerceptionModel.load(path),hive_model=perception,post=clean)
+        elif eye!='arena':
+            raise ValueError("eye must be 'arena' or 'bss'")
+        self.brain=NeuralController(graph,seed=self.world.seed,perception=perception,
                                     learning=self.offscreen,sample_actions=self.offscreen)
         if checkpoint=='auto':
             candidate=Path(__file__).resolve().parents[2]/'models/controller-market-v5.npz'
             checkpoint=candidate if candidate.exists() else None
         if checkpoint is not None:
-            self.brain.load(checkpoint,allow_migration=True)
+            self.brain.load(checkpoint,allow_migration=True,allow_perception_change=eye!='arena')
+        from .memory import FieldMemory
+        from .drives import ThinkingCenter
+        self.mind=ThinkingCenter(want_field,want_color)
+        c=self.world.config
+        self.memory=FieldMemory(c.speed,c.dt,c.half_size-.5)
+        self.memory.reset(self.world.x,self.world.y)
+        saved=Path(__file__).resolve().parents[2]/'models/field-memory.json'
+        if checkpoint is not None and saved.exists():
+            self.memory.load(saved)
+        from .sprouts import SproutSense
+        self.sense=SproutSense()
+        banners=Path(__file__).resolve().parents[2]/'models/sprout-banners.json'
+        if banners.exists():
+            self.sense.reader.load(banners)
         self.behavior=BehaviorTelemetry()
+        from .comms import CommunicationCenter
+        self.comms=CommunicationCenter()  # read-only preset messages for the trainer
         self.brain_enabled=True
         self._brain_session=Path('runs/arena-brain')/datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
         self._brain_session.mkdir(parents=True,exist_ok=True)
@@ -351,6 +391,7 @@ class ArenaApp(ShowBase):
     def toggle_brain(self):
         if self.brain is None:
             return
+        self.wait_brain_decision()
         if self.brain_enabled:
             self.finish_brain_feedback(terminal=True)
         self.brain.eligibility.fill(0)
@@ -365,14 +406,67 @@ class ArenaApp(ShowBase):
         self.finish_brain_feedback()
         self.render_state()
         camera_geometry=(self.world.camera_yaw,self.world.camera_pitch,self.world.camera_distance,float(self.camLens.getFov()[0]))
-        self._brain_action=self.brain.act(self.observe(),self.brain.decision_frames*self.world.config.dt,
+        image=self.observe()
+        self._brain_action=self.brain.act(image,self.brain.decision_frames*self.world.config.dt,
                                           camera_geometry=camera_geometry,
-                                          inventory=self.public_status())
+                                          inventory=self.public_status(),
+                                          goal_cue=self.decision_cue(image,camera_geometry),
+                                          attention=self.mind.attention())
         self._brain_next_tick=self.world.tick+self.brain.decision_frames
         if self.monitor is not None:
             self.monitor.capture()
         self.log_brain()
         return self._brain_action
+
+    def decision_cue(self,image,geometry):
+        """Steering cue from memory and pixels. Under sprout orders: visible tokens first, then the
+        field named by the recent banner, then the plain goal. Without orders tokens are ignored."""
+        if self.memory is None:
+            return None
+        seconds=self.world.tick*self.world.config.dt
+        token=self.sense.look(image,geometry,seconds) if self.sense is not None else None
+        w=self.world
+        mode_args=(w.pollen/w.config.pollen_capacity,w.conversion_active,w.in_conversion_zone())
+        goal=self.goal or self.mind.goal(self.memory,*mode_args)
+        color_cue=None
+        if self.eye is not None and self.mind.want_color and self.mind.mode(*mode_args)=='collect':
+            self.eye.segment(image)  # cached for the vision encoder that runs next on the same frame
+            color_cue=self.eye.color_cue(self.mind.want_color,geometry)
+        if w.sprout_orders:
+            field=self.sense.alert_field(seconds) if self.sense is not None else None
+            self.last_cue=token if token is not None else color_cue if color_cue is not None else self.memory.cue(field or goal)
+        else:
+            self.last_cue=color_cue if color_cue is not None else self.memory.cue(goal)
+        return self.last_cue
+
+    def start_brain_decision(self):
+        """Live window: capture the frame here, think on a worker so the window keeps redrawing."""
+        from concurrent.futures import ThreadPoolExecutor
+        self.finish_brain_feedback()
+        self.render_state()
+        geometry=(self.world.camera_yaw,self.world.camera_pitch,self.world.camera_distance,float(self.camLens.getFov()[0]))
+        image,status=self.observe(),self.public_status()
+        cue=self.decision_cue(image,geometry)
+        if self._brain_pool is None:
+            self._brain_pool=ThreadPoolExecutor(1)
+        self._brain_next_tick=self.world.tick+self.brain.decision_frames
+        self._brain_future=self._brain_pool.submit(self.brain.act,image,self.brain.decision_frames*self.world.config.dt,
+                                                   camera_geometry=geometry,inventory=status,goal_cue=cue,
+                                                   attention=self.mind.attention())
+
+    def poll_brain_decision(self):
+        future=self._brain_future
+        if future is not None and future.done():
+            self._brain_future=None
+            self._brain_action=future.result()
+            if self.monitor is not None:
+                self.monitor.capture()
+            self.log_brain()
+
+    def wait_brain_decision(self):
+        if self._brain_future is not None:
+            self._brain_future.result()
+            self._brain_future=None
 
     def finish_brain_feedback(self,terminal=False):
         events={'reward':self._brain_reward,'honey':self._brain_honey,'purchases':self._brain_purchases,
@@ -396,8 +490,19 @@ class ArenaApp(ShowBase):
     def advance_world(self,action):
         before=(self.world.x,self.world.y,self.world.z)
         result=self.world.step(action)
+        for i,gained in self.world.last_color_gain.items():
+            self.color_totals[COLOR_NAMES[i]]=self.color_totals.get(COLOR_NAMES[i],0)+gained
         if self.behavior is not None:
             self.behavior.observe(before,self.world,action,result[0])
+        if self.brain_enabled and self.memory is not None:
+            self.memory.integrate(self.world.x-before[0],self.world.y-before[1])
+            if result[3]['collected']>0:
+                name=None
+                if self.teach:
+                    cx,cy,_,field=min(self.world.patches,key=lambda p:math.hypot(p[0]-self.world.x,p[1]-self.world.y))
+                    # The tutor only names a field while the bee stands inside it, not on a field edge en route.
+                    name=field if max(abs(self.world.x-cx),abs(self.world.y-cy))<=4. else None
+                self.memory.visit(name,{COLOR_NAMES[i]:g for i,g in self.world.last_color_gain.items()})
         if self.brain_enabled:
             self._brain_reward+=result[3]['collected']
             self._brain_honey+=result[3]['honey_gain']
@@ -436,6 +541,8 @@ class ArenaApp(ShowBase):
         return result
 
     def log_brain(self,force=False):
+        if getattr(self,'comms',None) is not None:
+            self.comms.report(self)
         second=int(self.world.tick*self.world.config.dt)
         if self._brain_log is not None and (force or second!=self._brain_last_logged):
             record={'simulation_seconds':self.world.tick*self.world.config.dt,'neural':self.brain.snapshot(),
@@ -449,6 +556,8 @@ class ArenaApp(ShowBase):
             self._brain_checkpoint_bucket=bucket
 
     def destroy(self):
+        if getattr(self,'_brain_future',None) is not None:
+            self.wait_brain_decision()
         if getattr(self,'brain',None) is not None and getattr(self,'_brain_session',None) is not None:
             self.finish_brain_feedback(terminal=True)
             self.log_brain(force=True)
@@ -490,8 +599,9 @@ class ArenaApp(ShowBase):
             while self.accumulator>=self.world.config.dt:
                 # Mouse deltas apply once; held buttons apply every fixed simulation step.
                 if self.brain_enabled:
-                    if self.world.tick>=self._brain_next_tick:
-                        self.choose_brain_action()
+                    self.poll_brain_decision()
+                    if self._brain_future is None and self.world.tick>=self._brain_next_tick:
+                        self.start_brain_decision()
                     current=self._brain_action
                 else:
                     if action is None:
@@ -510,8 +620,64 @@ class ArenaApp(ShowBase):
             self.monitor.pump()
         return task.cont
 
+    def sync_events(self):
+        """Sprout stalk, tokens, and the on-screen notification, drawn in the scene so the policy camera sees them."""
+        w=self.world
+        if not hasattr(self,'event_nodes'):
+            self.event_nodes=self.render.attachNewNode('sprout-events')
+            self.stalk=self.shape('cylinder',self.event_nodes,(0,0,1.6),(.28,.28,3.2),(.25,.80,.20,1))
+            self.bulb=self.shape('sphere',self.event_nodes,(0,0,3.4),(.9,.9,.9),(.55,1.,.35,1))
+            self.bar=self.shape('box',self.event_nodes,(0,0,4.6),(1,.3,.3),(1.,.85,.15,1))
+            self.token_nodes=[self.shape('cylinder',self.event_nodes,(0,0,.5),(.45,.45,.07),TOKEN_COLOR) for _ in range(w.config.sprout_tokens+4)]
+            for node in (self.stalk,self.bulb,self.bar,*self.token_nodes):
+                node.setLightOff()
+                node.hide()
+            # The notification is attached to the camera, so it appears in both the window and the policy image.
+            self.banner=self.camera.attachNewNode('sprout-banner')
+            card=CardMaker('banner-card')
+            card.setFrame(-4.4,4.4,-.45,.62)
+            back=self.banner.attachNewNode(card.generate())
+            back.setColor(.05,.06,.10,.92)
+            self.banner_text=TextNode('banner-text')
+            self.banner_text.setAlign(TextNode.ACenter)
+            self.banner_text.setTextColor(1,1,1,1)
+            text=self.banner.attachNewNode(self.banner_text)
+            text.setScale(.46)
+            text.setPos(0,-.02,-.12)
+            self.banner.setPos(0,9,3.0)
+            self.banner.setLightOff()
+            self.banner.setDepthTest(False)
+            self.banner.setDepthWrite(False)
+            self.banner.setBin('fixed',100)
+            self.banner.hide()
+        s=w.sprout
+        if s is not None:
+            self.stalk.setPos(s['x'],s['y'],1.6); self.stalk.show()
+            self.bulb.setPos(s['x'],s['y'],3.4); self.bulb.show()
+            # Harvest progress bar (visible until harvested): width grows with pollen collected in the field.
+            fraction=min(1.,s['progress']/w.config.sprout_pollen)
+            if s['harvested']:
+                self.bar.hide()
+            else:
+                self.bar.setScale(max(.05,4*fraction),.3,.3)
+                self.bar.setPos(s['x']-2+2*fraction,s['y'],4.6)
+                self.bar.show()
+        else:
+            self.stalk.hide(); self.bulb.hide(); self.bar.hide()
+        for i,node in enumerate(self.token_nodes):
+            if i<len(w.tokens):
+                node.setPos(w.tokens[i]['x'],w.tokens[i]['y'],.5); node.show()
+            else:
+                node.hide()
+        if s is not None and s['age']<BANNER_SECONDS:
+            self.banner_text.setText(f'SPROUT SPAWNED: {s["field"]}')
+            self.banner.show()
+        else:
+            self.banner.hide()
+
     def render_state(self):
         w=self.world
+        self.sync_events()
         self.avatar.setPos(w.x,w.y,w.z)
         self.avatar.setH(w.heading)
         self.body.setZ(math.sin(w.tick*.22)*.025*w.speed_fraction if w.grounded else 0)
@@ -582,6 +748,7 @@ class ArenaApp(ShowBase):
             self._observation_buffer.setActive(False)
 
     def reset(self,seed=None,preserve_economy=False):
+        self.wait_brain_decision()
         previous_seed=self.world.seed
         self.world.reset(seed,preserve_economy=preserve_economy)
         if self.training_task=='convert':
@@ -595,6 +762,10 @@ class ArenaApp(ShowBase):
             self.harvest_ring.removeNode()
             self.build_world()
         self.sync_flower_positions()
+        if self.memory is not None:
+            self.memory.reset(self.world.x,self.world.y)
+        if self.sense is not None:
+            self.sense.reset()
         if self.brain is not None:
             self.finish_brain_feedback(terminal=True)
             self.brain.reset_dynamics()
@@ -671,12 +842,27 @@ def main():
     parser.add_argument('--brain-smoke-test',action='store_true',help='Check the actual camera/neuron/action loop offscreen')
     parser.add_argument('--task',choices=['pollen','convert','cycle','explore'],default='cycle',help='Collection/conversion curriculum')
     parser.add_argument('--checkpoint',type=Path)
+    parser.add_argument('--sprouts',type=float,default=0,metavar='SECONDS',help='Spawn a sprout event in a random field this often')
+    parser.add_argument('--sprout-orders',action='store_true',help='Order the bee to collect sprout tokens')
+    parser.add_argument('--eye',choices=['arena','bss'],default='arena',help='Flower detector feeding the optic neurons')
+    parser.add_argument('--want-color',choices=['white','red','blue'],help='The bee wants this flower color')
+    parser.add_argument('--want-field',help='The bee wants to go to this field, e.g. "ROSE FIELD"')
+    parser.add_argument('--hive-start',action='store_true',help='Spawn on the hive pad instead of the blue field')
+    parser.add_argument('--goal',help='Field to recall from memory and steer toward, e.g. "ROSE FIELD"')
     parser.add_argument('--fresh',action='store_true',help='Do not load a trained controller checkpoint')
     args=parser.parse_args()
-    app=ArenaApp(ArenaConfig(seed=args.seed,camera_locked=not args.free_camera),offscreen=args.offscreen,software=args.software)
+    app=ArenaApp(ArenaConfig(seed=args.seed,camera_locked=not args.free_camera,sprout_seconds=args.sprouts),offscreen=args.offscreen,software=args.software)
     if args.brain or args.brain_smoke_test:
         app.connect_brain(monitor=not args.no_monitor,task=args.task,
-                          checkpoint=None if args.fresh or args.brain_smoke_test else args.checkpoint or 'auto')
+                          checkpoint=None if args.fresh or args.brain_smoke_test else args.checkpoint or 'auto',
+                          eye=args.eye,want_color=args.want_color,want_field=args.want_field)
+    if args.hive_start:
+        c=app.world.config
+        app.world.config=replace(c,spawn_x=c.hive_x,spawn_y=c.hive_y+1.5)
+        app.reset()
+    if args.goal:
+        app.goal=args.goal
+    app.world.sprout_orders=args.sprout_orders
     if args.brain_smoke_test:
         import numpy as np
         try:
