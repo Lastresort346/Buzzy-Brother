@@ -22,6 +22,13 @@ class PlaceTests(unittest.TestCase):
         self.assertEqual(labels[9], PATH)
         self.assertEqual(labels[20], PATH)
 
+    def test_prompt_on_screen_means_hive(self):
+        labels = auto_labels([0.] * 4, [False] * 4, 'f', window=1, pads=[False, True, True, False])
+        self.assertEqual(labels, [PATH, HIVE, HIVE, PATH])
+        model = PlaceModel([HIVE, PATH, 'f'], np.zeros((10, 3)), np.zeros(9), np.ones(9))
+        s = status(.4, np.array([0., 1., 0.]), model, pad=True)
+        self.assertEqual((s[0], s[3], s[12]), (.4, 1., 0.))  # the pad overrides a "path" guess
+
     def test_hive_spreads_over_standing_still(self):
         fills = [0, .5, .5, .5, .5, .4, .5 - .2, .5 - .2, .5 - .2, .5 - .2]
         moving = [True, False, False, False, False, False, False, False, False, True]

@@ -6,7 +6,8 @@ import numpy as np
 from flybrain.arena.world import Action
 from flybrain.roblox import (ALLOWED, BAR_EMPTY, BAR_LEFT, BAR_RIGHT, PANEL_COLOR, PANEL_PROBE,
                              SandboxedInput, inputs_for, pollen_events, read_pollen_fill, stuck, confirmed_fill,
-                             RECORD_ORDER, action_from_inputs, balance_walking, held_inputs, reward_events, WallReflex)
+                             RECORD_ORDER, action_from_inputs, balance_walking, held_inputs, reward_events, WallReflex,
+                             ARRIVAL_BONUS, PromptWatch, honey_prompt)
 
 
 def hud_frame(fill):
@@ -46,6 +47,29 @@ class PollenHudTests(unittest.TestCase):
         self.assertEqual(reward_events(20, 0, False, {'w'})['reward'], 0)  # bees gathered it
         self.assertEqual(reward_events(0, 30, False, set())['honey'], 30)  # converting needs no dip
         self.assertLess(reward_events(0, 0, True, {'w'})['progress'], 0)
+
+    def test_honey_prompt_is_a_wide_pill_under_the_hud_bars(self):
+        def frame(color, box=(60, 90, 140, 180), shape=(1080, 1920)):
+            f = np.full((*shape, 3), (40, 140, 40), np.uint8)
+            y0, y1, x0, x1 = box
+            f[y0:y1, x0 * 5:x1 * 5] = color
+            return f
+        blue, red = (40, 110, 230), (200, 40, 40)
+        self.assertEqual(honey_prompt(frame(blue, (80, 125, 156, 220))), 'make')
+        self.assertEqual(honey_prompt(frame(red, (80, 125, 156, 220))), 'stop')
+        self.assertIsNone(honey_prompt(frame(blue, (400, 445, 156, 220))))  # same colour elsewhere: a sign, not the prompt
+        self.assertIsNone(honey_prompt(frame(blue, (80, 125, 0, 20))))  # off to the side
+        self.assertIsNone(honey_prompt(frame(blue, (80, 140, 180, 190))))  # a tall thin blob, not a pill
+        self.assertIsNone(honey_prompt(np.full((169, 320, 3), 90, np.uint8)))
+        self.assertEqual(honey_prompt(frame(red, (10, 19, 24, 40), (169, 320))), 'stop')  # recording resolution
+
+    def test_prompt_watch_needs_two_frames_and_marks_arrival(self):
+        watch = PromptWatch()
+        self.assertEqual([watch.update(p) for p in [None, 'stop', None, 'stop', 'stop', 'stop', 'make', 'make', None, None]],
+                         [(None, False), (None, False), (None, False), (None, False), ('stop', True), ('stop', False),
+                          ('stop', False), ('make', False), ('make', False), (None, False)])
+        self.assertEqual(reward_events(0, 0, False, set(), arrived=True)['progress'], ARRIVAL_BONUS)
+        self.assertLess(reward_events(0, 0, True, {'w'}, arrived=True)['progress'], 0)  # a wall still costs
 
     def test_wall_reflex_backs_up_then_sidesteps(self):
         reflex = WallReflex(patience=4, rng=np.random.default_rng(0))

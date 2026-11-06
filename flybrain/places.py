@@ -23,13 +23,16 @@ def thumbnail(frame):
     return (blocks / 255.).ravel()
 
 
-def auto_labels(fills, dipping, field, window=4, moving=None):
+def auto_labels(fills, dipping, field, window=4, moving=None, pads=None):
     """Per-decision place labels from the pollen trace (fills may contain None).
 
     With `moving`, the hive label also spreads over the standing-still stretch around each
-    drop: players wait at the hive before and between conversion steps.
+    drop: players wait at the hive before and between conversion steps. With `pads` (the
+    honey prompt is on screen), those decisions are the hive for certain.
     """
     labels = _trace_labels(fills, dipping, field, window)
+    if pads is not None:
+        labels = [HIVE if pad else label for label, pad in zip(labels, pads)]
     if moving is not None:
         for direction in (range(1, len(labels)), range(len(labels) - 2, -1, -1)):
             for t in direction:
@@ -112,12 +115,17 @@ class Smoother:
         return self.probs
 
 
-def status(fill, probs, model):
-    """13 controller status channels: 0 fill, 1 full, 3 hive, 4-9 fields, 12 path (others unused)."""
+def status(fill, probs, model, pad=False):
+    """13 controller status channels: 0 fill, 1 full, 3 hive, 4-9 fields, 12 path (others unused).
+
+    `pad`: the honey prompt is on screen, so the player is on the hive pad: hive is certain.
+    """
     s = np.zeros(13)
     if fill is not None:
         s[0], s[1] = fill, float(fill >= .999)
-    if probs is not None:
+    if pad:
+        s[3] = 1.
+    elif probs is not None:
         s[3] = probs[model.classes.index(HIVE)]
         s[12] = probs[model.classes.index(PATH)]
         s[4:4 + len(model.classes) - 2] = probs[2:]

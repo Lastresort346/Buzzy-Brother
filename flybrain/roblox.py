@@ -20,50 +20,13 @@ from pathlib import Path
 
 import numpy as np
 
+from .hud import (BAR_EMPTY, BAR_LEFT, BAR_RIGHT, BAR_ROWS, PANEL_COLOR, PANEL_PROBE, PromptWatch, confirmed_fill,  # noqa: F401
+                  honey_prompt, pollen_events, read_pollen_fill)
+
 # shortcut: fixed key bindings (BSS defaults), upgrade if users rebind keys in-game.
 ALLOWED = {'w': 0x57, 'a': 0x41, 's': 0x53, 'd': 0x44, 'space': 0x20, 'e': 0x45, 'mouse': None}
 STOP_KEY = 0x77  # F8
 RECORD_ORDER = ('d', 'a', 'w', 's', 'space', 'mouse', 'e')  # column order in demonstrations.npz
-
-
-# Pollen bar in the BSS HUD: anchored top-centre at fixed pixel size (measured at 1920 wide,
-# same position at 1080 and 1009 high). Offsets are from the window's horizontal centre.
-BAR_LEFT, BAR_RIGHT, BAR_ROWS = 59, 280, (27, 51)  # rows above/below the "0/200" text
-BAR_EMPTY = np.array([115, 112, 101])
-PANEL_PROBE, PANEL_COLOR = (40, 285), np.array([248, 240, 213])  # light frame just right of the bar
-
-
-def read_pollen_fill(frame):
-    """Backpack fill in [0, 1] from the pollen bar, or None if the HUD is not visible."""
-    cx = frame.shape[1] // 2
-    y, dx = PANEL_PROBE
-    if frame.shape[0] <= max(BAR_ROWS) or np.abs(frame[y, cx + dx].astype(int) - PANEL_COLOR).sum() > 60:
-        return None
-    bar = frame[list(BAR_ROWS), cx + BAR_LEFT:cx + BAR_RIGHT].astype(int)
-    # The empty bar is translucent grey (scenery shows through but stays desaturated);
-    # the fill is a saturated colour (green at 6/200). Require it in both rows.
-    filled = (bar.max(-1) - bar.min(-1) > 60).all(0)
-    return float(filled.mean())
-
-
-def confirmed_fill(raw_before, raw, accepted):
-    """Accept a reading only when the previous frame was within 10 bar pixels of it.
-
-    One-frame glitches (seen: 5 -> 80 -> 5 pollen) are rejected; steady collection is not.
-    """
-    if raw is None or raw_before is None or abs(raw - raw_before) > 10 / (BAR_RIGHT - BAR_LEFT):
-        return accepted
-    return raw
-
-
-def pollen_events(before, after, capacity):
-    """(collected, converted) pollen between two fills. Pollen only drops by conversion."""
-    if before is None or after is None:
-        return 0., 0.
-    change = (after - before) * capacity
-    if abs(change) < capacity / (BAR_RIGHT - BAR_LEFT):  # under one bar pixel: noise
-        return 0., 0.
-    return (change, 0.) if change > 0 else (0., -change)
 
 
 class WallReflex:
@@ -236,17 +199,20 @@ class SandboxedInput:
 
 
 STUCK_PENALTY = -.1  # worth about 10 pollen in the reward system's units (pollen/100)
+ARRIVAL_BONUS = .3  # worth about 30 pollen: reaching the hive pad with a mostly full bag
 
 
-def reward_events(collected, converted, blocked, previous_inputs):
+def reward_events(collected, converted, blocked, previous_inputs, arrived=False):
     """Reward for the previous decision, in RewardSystem.evaluate's keyword terms.
 
     Bees gather on their own, so pollen only counts while the bot was dipping. Walls cost
     about 10 pollen via the signed shaping channel; the shared 'blocked' term (-0.05) is
-    too weak to outweigh bee-made pollen.
+    too weak to outweigh bee-made pollen. Arriving at the hive pad with a mostly full bag
+    pays through the same channel, so walking home is what gets learned.
     """
+    progress = STUCK_PENALTY if blocked else ARRIVAL_BONUS if arrived else 0.
     return {'reward': collected if 'mouse' in previous_inputs else 0., 'honey': converted,
-            'blocked_fraction': float(blocked), 'progress': STUCK_PENALTY if blocked else 0.}
+            'blocked_fraction': float(blocked), 'progress': progress}
 
 
 def brain_frame(frame):
@@ -265,7 +231,8 @@ def fit_places(paths, output):
             fills = [None if np.isnan(f) else float(f) for f in data['fills']]
             inputs = data['inputs']
             labels = places.auto_labels(fills, inputs[:, RECORD_ORDER.index('mouse')], str(data['field']),
-                                        moving=inputs[:, :4].any(1))
+                                        moving=inputs[:, :4].any(1),
+                                        pads=[honey_prompt(f) is not None for f in data['frames']])
             thumbs = [places.thumbnail(f) for f in data['frames']]
         cut = int(len(thumbs) * .8)  # hold out the last 20% of each recording in time
         train_x += thumbs[:cut]; train_y += labels[:cut]
@@ -301,6 +268,12 @@ def main(argv=None):
     parser.add_argument('--places', default='models/bss-places.npz', help='place recognizer (hive/path/fields)')
     parser.add_argument('--fit-places', nargs='+', metavar='DEMOS',
                         help='train the place recognizer on recordings that include frames, then exit')
+    parser.add_argument('--memory', default='models/bss-field-memory.json',
+                        help='remembered field positions relative to your hive pad (read, and written by live runs)')
+    parser.add_argument('--fit-nav', action='store_true',
+                        help='with --fit: also fit cue-following on the recordings (only sound if you never turned the camera in them)')
+    parser.add_argument('--no-auto-convert', action='store_true',
+                        help='do not press E by itself on the hive pad with a half-full bag (the brain must learn to)')
     args = parser.parse_args(argv)
     if args.record and not args.field:
         parser.error('--record needs --field NAME (the field you will collect in)')
@@ -321,34 +294,50 @@ def main(argv=None):
         return
     from .arena.brain import load_graph, NeuralController
     from .arena.perception import PerceptionModel
-    from . import places
+    from . import nav, places
     place_model = places.PlaceModel.load(args.places) if Path(args.places).exists() else None
     brain = NeuralController(load_graph(), perception=PerceptionModel.load(), learning=args.learn,
                              sample_actions=args.learn)
     brain.load(args.checkpoint, allow_migration=True)
 
-    def inventory_for(fill, small, smoother):
+    def inventory_for(fill, small, smoother, pad=False):
         if place_model is None:
             return None if fill is None else [fill, 0.]  # honey not read yet
-        return places.status(fill, smoother.update(place_model.probabilities(small)), place_model)
+        return places.status(fill, smoother.update(place_model.probabilities(small)), place_model, pad)
+
+    memory = nav.open_memory(args.memory)
+    compass = nav.Compass(memory)
+    if not brain.nav_weights.any():
+        brain.nav_weights[:] = nav.steering_prior()  # start by following the cue; learning refines it
 
     if args.fit:
-        features, labels = [], []
+        features, labels, cues = [], [], []
         for path in args.fit:
             with np.load(path) as data:
-                if 'frames' in data:  # replay so features include the current place recognizer
+                inputs = [{n for n, on in zip(RECORD_ORDER, row) if on} for row in data['inputs']]
+                if 'frames' in data:  # replay so features include the place recognizer, pad and goal cue
                     brain.reset_dynamics()
-                    smoother = places.Smoother()
-                    for small, fill in zip(data['frames'], data['fills']):
+                    smoother, watch, compass = places.Smoother(), PromptWatch(), nav.Compass(memory)
+                    previous, last_fill = set(), None
+                    for small, fill, keys in zip(data['frames'], data['fills'], inputs):
                         fill = None if np.isnan(fill) else float(fill)
-                        brain.act(small, seconds=.25, inventory=inventory_for(fill, small, smoother))
+                        pad = watch.update(honey_prompt(small))[0] is not None
+                        collected = pollen_events(last_fill, fill, args.capacity)[0] if 'mouse' in previous else 0.
+                        compass.update(previous, False, fill, pad, collected, str(data['field']))
+                        cues.append(compass.cue())
+                        brain.act(small, seconds=.25, inventory=inventory_for(fill, small, smoother, pad),
+                                  goal_cue=cues[-1])
                         features.append(brain.last_features.copy())
+                        previous, last_fill = keys, fill
                 else:
                     features += list(data['features'])
-                labels += [action_from_inputs({n for n, on in zip(RECORD_ORDER, row) if on})
-                           for row in data['inputs']]
-        features, labels = balance_walking(features, labels)
+                    cues += [np.zeros(4)] * len(inputs)
+                labels += [action_from_inputs(keys) for keys in inputs]
+        paired, labels = balance_walking(list(zip(features, cues)), labels)
+        features, cues = [p[0] for p in paired], [p[1] for p in paired]
         print('Fit:', brain.fit_demonstrations(features, labels, steps=args.fit_steps), flush=True)
+        if args.fit_nav:
+            print('Navigation:', brain.fit_navigation(features, cues, labels, steps=args.fit_steps), flush=True)
         brain.save(session / 'readout.npz')
         print(f'Saved readout trained on {len(labels)} recorded decisions to {session / "readout.npz"}', flush=True)
         return
@@ -365,6 +354,8 @@ def main(argv=None):
     smoother = places.Smoother()
     reflex = WallReflex()
     reflexed = False  # was the previous decision the reflex's, not the brain's?
+    watch, prompt, arrived, e_sent = PromptWatch(), None, False, False
+    compass.reset()
     end = time.monotonic() + args.seconds
     fill = raw = view = None
     wanted = set()
@@ -383,15 +374,29 @@ def main(argv=None):
             totals[0] += collected
             totals[1] += converted
             totals[2] += blocked
+            prompt, arrived = watch.update(honey_prompt(frame))
+            arrived = arrived and fill is not None and fill >= .5  # home with a mostly full bag
             if args.learn and window.focused() and not reflexed:
                 # Credited to the previous decision; applied inside the next act().
-                brain.queue_feedback(**reward_events(collected, converted, blocked, wanted))
+                brain.queue_feedback(**reward_events(collected, converted, blocked, wanted, arrived))
             small = brain_frame(frame)
-            inventory = inventory_for(fill, small, smoother)
+            inventory = inventory_for(fill, small, smoother, prompt is not None)
             if place_model is not None:
-                place = place_model.classes[int(np.argmax(smoother.probs))]
-            action = brain.act(small, seconds=.25, inventory=inventory)
+                place = 'hive' if prompt else place_model.classes[int(np.argmax(smoother.probs))]
+            # Where the last decision's keys took it, then the cue: home when nearly full, else its field.
+            compass.update(wanted, blocked, fill, prompt is not None, collected if 'mouse' in wanted else 0., place)
+            action = brain.act(small, seconds=.25, inventory=inventory, goal_cue=compass.cue())
             wanted = inputs_for(action)
+            if prompt is None:
+                e_sent = False
+            if 'e' in wanted and prompt != 'make':
+                wanted = wanted - {'e'}  # E only starts honey on the pad; elsewhere, or mid-conversion, it would do nothing or stop it
+            elif 'e' in wanted:
+                e_sent = True
+            elif (prompt == 'make' and not e_sent and not args.no_auto_convert
+                  and fill is not None and fill >= .5):
+                wanted = wanted | {'e'}  # engineered: start honey once per pad visit with a half-full bag
+                e_sent = True
             escape = reflex.step(blocked) if control is not None else None
             reflexed = escape is not None
             if reflexed:
@@ -407,6 +412,8 @@ def main(argv=None):
                 control.apply(wanted)
             shown = 'no HUD' if fill is None else f'{fill * args.capacity:.0f}/{args.capacity}'
             print(f'{time.strftime("%H:%M:%S")} pollen={shown} place={place} inputs={sorted(wanted)} '
+                  f'pad={prompt} goal={"home" if compass.delivering else "field"} '
+                  f'at=({compass.position[0]:.0f},{compass.position[1]:.0f}) '
                   f'focused={window.focused()} stuck={blocked} reflex={reflexed} collected={totals[0]:.0f} '
                   f'converted={totals[1]:.0f} stuck_total={totals[2]}', flush=True)
             time.sleep(max(0., .25 - (time.monotonic() - tick)))
@@ -416,6 +423,8 @@ def main(argv=None):
         if args.learn:
             brain.save(session / 'readout.npz')
             print(f'Saved learned readout to {session / "readout.npz"}', flush=True)
+        if memory.nodes:
+            memory.save(args.memory)
         if recorded_features:
             session.mkdir(parents=True, exist_ok=True)
             np.savez_compressed(session / 'demonstrations.npz', features=np.array(recorded_features),
